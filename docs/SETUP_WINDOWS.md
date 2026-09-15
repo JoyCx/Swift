@@ -132,3 +132,57 @@ Everything you validate here transfers unchanged to the 27B on a bigger box.
 * Thinking not splitting (`think tokens 0` in preflight) → add `--reasoning-format deepseek`
   to llama-server, or check `--jinja` is set so the Qwen template is used.
 * Paths: the CLI takes Windows paths fine; in configs use forward slashes to avoid YAML escaping.
+
+## 4. Using the community artifacts (their quants, not the base)
+
+You linked two very different things. Know which job each does before downloading 54 GB.
+
+| artifact | format / size | what it's for on a 5090 |
+|---|---|---|
+| `bartowski/ukisai_Swift-Qwen3.8-27b-GGUF` | GGUF quants (Q2..Q8) | **serve for inference.** This is the measurement / rollout / eval path (§1). Q4_K_M fits 32 GB. GGUF is inference-only — you cannot run direction/edit/transfer on it. |
+| `d0xin/Swift-Qwen3.8-27B-Uncensored-BF16` | BF16 safetensors, ~54 GB | **the abliteration is already done.** Editable weights for the surgery stages; too big to serve in BF16 on 32 GB (quantize it first). |
+
+### If your goal is "uncensored Swift on my 5090"
+
+You do **not** need `swiftlab abliterate` — d0xin already removed refusal. Just quantize that
+BF16 to GGUF yourself and serve it like §1 (no uncensored GGUF is published, so you make it):
+
+```powershell
+huggingface-cli download d0xin/Swift-Qwen3.8-27B-Uncensored-BF16 --local-dir A:\models\swift-unc-bf16
+python A:\llama.cpp\convert_hf_to_gguf.py A:\models\swift-unc-bf16 --outtype bf16 --outfile A:\models\swift-unc-bf16.gguf
+A:\llama.cpp\llama-quantize.exe A:\models\swift-unc-bf16.gguf A:\models\swift-unc-Q4_K_M.gguf Q4_K_M
+A:\llama.cpp\llama-server.exe -m A:\models\swift-unc-Q4_K_M.gguf --alias swift-unc --host 127.0.0.1 --port 8080 -ngl 99 -c 16384 --jinja --reasoning-format deepseek
+```
+
+Then point `configs/llama-server-27b-5090.yaml` `backend.model: swift-unc` and run §1. For a
+better quant, generate an imatrix from your own calibration text first (see `docs/QUANT.md`).
+
+### If your goal is "cut Swift's thinking further" (weight surgery, no training)
+
+This is doable on one 5090 without a rented box, because capture can run 4-bit and the edit
+runs on CPU. Start from the BF16 safetensors (d0xin uncensored, or the original
+`ukisai/Swift-Qwen3.8-27b`):
+
+```powershell
+pip install bitsandbytes            # for 4-bit capture; if it won't build on Blackwell, use the max_memory CPU-offload line in the config
+# rollouts + settle through the served GGUF (fast), directions through the BF16 (4-bit load)
+swiftlab rollout   --config configs\llama-server-27b-5090.yaml --bank runs\u\bank.jsonl --split mine --out runs\u\rollouts.jsonl
+swiftlab settle    --config configs\llama-server-27b-5090.yaml --bank runs\u\bank.jsonl --rollouts runs\u\rollouts.jsonl --out runs\u\settled.jsonl
+swiftlab direction --config configs\uncensored-27b-5090.yaml --bank runs\u\bank.jsonl --settled runs\u\settled.jsonl --out runs\u\bundle.json
+swiftlab search    --config configs\uncensored-27b-5090.yaml --bank runs\u\bank.jsonl --bundle runs\u\bundle.json --trials 15 --max-tasks 25 --out runs\u\search.json
+python -c "import json;s=json.load(open(r'runs\u\search.json'));json.dump(s['best_edit'],open(r'runs\u\edit.json','w'))"
+swiftlab edit      --config configs\uncensored-27b-5090.yaml --bundle runs\u\bundle.json --edit-json runs\u\edit.json --model-dir A:\models\swift-unc-bf16 --out A:\models\swift-unc-surgical
+# quantize the edited BF16 to GGUF and serve as a new eval arm (§1c/§1 quant)
+```
+
+Notes: 4-bit capture makes the *direction* slightly noisier than full BF16 but the edit is
+still written into the true BF16 tensors, so quality of the shipped model is unaffected. The
+`search` stage re-generates through the 4-bit model and is the slow part — keep `--max-tasks`
+small. **Training** the 27B (penalised LoRA / OPD / GSPO) still wants QLoRA and more than one
+32 GB card is comfortable with; prototype those on Qwen3-8B (§2) or rent a box (§3).
+
+### Which base to start from
+
+* Want uncensored + shorter thinking → start from **d0xin BF16**, run the surgery above, quantize.
+* Want only shorter thinking, keep original alignment → start from **ukisai/Swift-Qwen3.8-27b** BF16.
+* Just want to measure/serve Swift as-is → **bartowski GGUF**, §1, done.

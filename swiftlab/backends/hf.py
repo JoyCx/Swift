@@ -23,7 +23,21 @@ class HFBackend(Backend):
         self.torch = torch
         self.tok = tokenizer or AutoTokenizer.from_pretrained(cfg.model, trust_remote_code=True)
         dtype = getattr(torch, cfg.dtype)
-        self.model = model or AutoModelForCausalLM.from_pretrained(cfg.model, torch_dtype=dtype, device_map=cfg.device_map, trust_remote_code=True)
+        load_kw: dict[str, Any] = {"torch_dtype": dtype, "device_map": cfg.device_map, "trust_remote_code": True}
+        # 32 GB card + a 27B won't fit in BF16. Two ways to still capture activations for the edit:
+        #   load_in_4bit: bitsandbytes 4-bit base (~16 GB VRAM); activations stay fp16, capture is exact enough.
+        #   otherwise device_map="auto" spills layers to system RAM (needs ~54 GB free RAM), slower but no bnb.
+        # The edit itself (swiftlab edit) never loads the model — it streams safetensors on CPU.
+        if cfg.extra.get("load_in_4bit"):
+            from transformers import BitsAndBytesConfig
+            load_kw.pop("torch_dtype")
+            load_kw["quantization_config"] = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=dtype,
+                                                                bnb_4bit_quant_type=cfg.extra.get("bnb_quant_type", "nf4"),
+                                                                bnb_4bit_use_double_quant=True)
+        max_mem = cfg.extra.get("max_memory")            # e.g. {"0": "30GiB", "cpu": "120GiB"} for CPU offload
+        if max_mem:
+            load_kw["max_memory"] = max_mem
+        self.model = model or AutoModelForCausalLM.from_pretrained(cfg.model, **load_kw)
         self.model.eval()
         self._layers = _find_layers(self.model)
 

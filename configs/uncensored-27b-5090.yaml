@@ -1,0 +1,32 @@
+# Editing / capturing on d0xin/Swift-Qwen3.8-27B-Uncensored-BF16 (abliteration ALREADY done)
+# on a single 32 GB card. Two capture modes below — pick one:
+#   (a) load_in_4bit: needs bitsandbytes (pip install bitsandbytes); ~16 GB VRAM.
+#   (b) comment out load_in_4bit and set max_memory to spill to system RAM (~54 GB RAM free).
+# The `edit` stage does NOT load the model into VRAM at all; it streams safetensors on CPU.
+name: swift27b-uncensored-5090
+backend:
+  kind: hf
+  model: d0xin/Swift-Qwen3.8-27B-Uncensored-BF16   # or a local snapshot path
+  dtype: bfloat16
+  device_map: auto
+  reasoning_effort: xhigh
+  max_tokens: 4096
+  concurrency: 1
+  extra:
+    load_in_4bit: true                # (a) 4-bit capture; comment out to use (b)
+    bnb_quant_type: nf4
+    # max_memory: {"0": "30GiB", "cpu": "120GiB"}   # (b) CPU-offload capture instead of 4-bit
+direction:
+  layers: []
+  matrices: [self_attn.o_proj, mlp.down_proj]
+  ridge_lambda: 0.01
+  gamma: 1.0
+  gamma_kernel: gaussian
+  kernel_width: 4.0
+  atoms: [coding, knowledge, format, language]
+bank:
+  seeds: [data/tasks/coding_seed.jsonl, data/tasks/knowledge_seed.jsonl, data/tasks/math_seed.jsonl]
+  domains: [coding, knowledge, math]
+  split: {mine: 0.6, calib: 0.2, eval: 0.2}
+settle: {checkpoints: 8, answer_max_tokens: 512, min_think_tokens: 200}
+eval: {seeds: 5, bootstrap: 2000, accuracy_tolerance: 0.01}
