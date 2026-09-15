@@ -1,4 +1,4 @@
-"""swiftlab command line.  Stages can be run one by one, or `demo` runs everything on the mock."""
+"""swiftlab command line. Run `swiftlab preflight` first to validate your real server and verifiers."""
 from __future__ import annotations
 import argparse, json, sys
 from pathlib import Path
@@ -21,6 +21,8 @@ def _cfg(args):
 
 def _backend(cfg, bank=None):
     from .backends import make_backend
+    if cfg.backend.kind not in ("openai", "hf"):
+        raise SystemExit(f"backend.kind must be 'openai' or 'hf' (got {cfg.backend.kind!r}). Set it in the config or with --set backend.kind=openai")
     return make_backend(cfg.backend, bank=bank)
 
 
@@ -119,7 +121,7 @@ def cmd_search(args):
     from .directions import load_bundle
     from .search import run_search, kl_divergence
     from .rollout import run_rollouts
-    from .edit import apply_in_place, restore_in_place, apply_to_mock
+    from .edit import apply_in_place, restore_in_place
     cfg = _cfg(args)
     bank, tasks = _tasks(args, cfg, "calib")
     tasks = bank.__class__(tasks).sample(args.max_tasks or 40, seed=1)
@@ -134,17 +136,12 @@ def cmd_search(args):
 
     def evaluate(edit):
         n_trial[0] += 1
-        if cfg.backend.kind == "mock":
-            eb = apply_to_mock(be, edit)
-            rows = run_rollouts(eb, tasks, 1, tmp / f"t{n_trial[0]}.jsonl", arm="trial", resume=False)
-            kl = kl_divergence(base_dist, eb.next_token_dist(kl_prompts))
-        else:
-            saved = apply_in_place(be.model, edit)
-            try:
-                rows = run_rollouts(be, tasks, 1, tmp / f"t{n_trial[0]}.jsonl", concurrency=1, arm="trial", resume=False)
-                kl = kl_divergence(base_dist, be.next_token_dist(kl_prompts))
-            finally:
-                restore_in_place(be.model, saved)
+        saved = apply_in_place(be.model, edit)
+        try:
+            rows = run_rollouts(be, tasks, 1, tmp / f"t{n_trial[0]}.jsonl", concurrency=1, arm="trial", resume=False)
+            kl = kl_divergence(base_dist, be.next_token_dist(kl_prompts))
+        finally:
+            restore_in_place(be.model, saved)
         return {"think_ratio": sum(r["think_tokens"] for r in rows) / max(1, base_think), "acc_delta": sum(r["correct"] for r in rows) / len(rows) - base_acc, "kl": kl}
 
     res = run_search(bundle, evaluate, n_trials=args.trials, w_kl=args.w_kl, acc_tol=cfg.eval.accuracy_tolerance)
@@ -216,7 +213,7 @@ def cmd_sftdata(args):
 def cmd_abliterate(args):
     from .abliterate import build_refusal_bundle, load_prompts, measure, score as ab_score
     from .directions import load_bundle, save_bundle
-    from .edit import make_edit, apply_in_place, restore_in_place, apply_to_mock, apply_to_safetensors
+    from .edit import make_edit, apply_in_place, restore_in_place, apply_to_safetensors
     from .search import kl_divergence, run_search
     from .rollout import run_rollouts
     cfg = _cfg(args)
@@ -242,18 +239,13 @@ def cmd_abliterate(args):
 
     def evaluate(edit):
         n[0] += 1
-        if cfg.backend.kind == "mock":
-            eb = apply_to_mock(be, edit, "mock-abliterated"); m = measure(eb, harmful[-max(8, len(harmful) // 4):])
-            rows = run_rollouts(eb, calib, 1, Path(args.out).parent / "ab_trial.jsonl", arm="trial", resume=False)
-            kl = kl_divergence(base_dist, eb.next_token_dist(kl_prompts))
-        else:
-            saved = apply_in_place(be.model, edit)
-            try:
-                m = measure(be, harmful[-max(8, len(harmful) // 4):], effort=cfg.backend.reasoning_effort)
-                rows = run_rollouts(be, calib, 1, Path(args.out).parent / "ab_trial.jsonl", concurrency=1, arm="trial", resume=False)
-                kl = kl_divergence(base_dist, be.next_token_dist(kl_prompts))
-            finally:
-                restore_in_place(be.model, saved)
+        saved = apply_in_place(be.model, edit)
+        try:
+            m = measure(be, harmful[-max(8, len(harmful) // 4):], effort=cfg.backend.reasoning_effort)
+            rows = run_rollouts(be, calib, 1, Path(args.out).parent / "ab_trial.jsonl", concurrency=1, arm="trial", resume=False)
+            kl = kl_divergence(base_dist, be.next_token_dist(kl_prompts))
+        finally:
+            restore_in_place(be.model, saved)
         return {"refusal_rate": m["refusal_rate"], "kl": kl, "think_ratio": sum(r["think_tokens"] for r in rows) / max(1, base_think),
                 "acc_delta": sum(r["correct"] for r in rows) / len(rows) - base_acc}
 
@@ -277,9 +269,10 @@ def cmd_report(args):
     print(json.dumps(write_report(run, args.out)))
 
 
-def cmd_demo(args):
-    from .demo import run_demo
-    run_demo(args.out, n_tasks=args.n_tasks, seeds=args.seeds, trials=args.trials, quiet=False)
+def cmd_preflight(args):
+    from .preflight import run_preflight
+    ok = run_preflight(_cfg(args), server=not args.local_only, n=args.n)
+    raise SystemExit(0 if ok else 1)
 
 
 # --------------------------------------------------------------------------- parser
@@ -328,8 +321,9 @@ def main(argv=None):
     s.add_argument("--max-tasks", type=int, default=0); s.add_argument("--out-bundle", default="runs/refusal_bundle.json"); s.add_argument("--out", default="runs/abliterate.json")
     s.add_argument("--model-dir", default=None); s.add_argument("--apply-out", default=None); s.set_defaults(fn=cmd_abliterate)
     s = sub.add_parser("report", help="render report from run json"); s.add_argument("--run-json", required=True); s.add_argument("--out", default="runs/report"); s.set_defaults(fn=cmd_report)
-    s = sub.add_parser("demo", help="full pipeline on the mock model"); s.add_argument("--out", default="runs/demo")
-    s.add_argument("--n-tasks", type=int, default=60); s.add_argument("--seeds", type=int, default=3); s.add_argument("--trials", type=int, default=20); s.set_defaults(fn=cmd_demo)
+    s = sub.add_parser("preflight", help="validate the real server + verifiers before a long run"); common(s, bank=False)
+    s.add_argument("--local-only", action="store_true", help="skip server checks, validate verifiers/decontam only")
+    s.add_argument("--n", type=int, default=1, help="tasks per domain to probe through the server"); s.set_defaults(fn=cmd_preflight)
 
     args = p.parse_args(argv)
     args.fn(args)

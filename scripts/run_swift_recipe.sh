@@ -15,6 +15,7 @@ mkdir -p "$RUN"
 
 # ---- 1. "generated a large amount of different (out-of-distribution) domain traces" ---------------
 #   serve BASE on :8000 first:  vllm serve $BASE --served-model-name base --reasoning-parser qwen3 --port 8000
+swiftlab preflight --config "$CFG"                                                # validate server + verifiers before anything long
 swiftlab bank    --config "$CFG" --synthetic 400 --out "$RUN/bank.jsonl"           # + your own seeds, decontam list in config
 swiftlab rollout --config "$CFG" --set backend.model=base --bank "$RUN/bank.jsonl" --split mine --samples 2 --out "$RUN/rollouts.jsonl"
 

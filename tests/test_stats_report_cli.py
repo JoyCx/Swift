@@ -1,4 +1,3 @@
-import json, subprocess, sys
 from swiftlab.stats import paired_bootstrap, mcnemar_exact, median
 from swiftlab.quant import parse_kl_output, gguf_commands, build_calibration, size_table
 from swiftlab.report import markdown, html_report
@@ -24,13 +23,15 @@ def test_quant_helpers():
     assert size_table(27, ["Q4_K_M"])[0]["approx_gb"] > 10
 
 
-def test_demo_cli_and_report(tmp_path):
-    out = tmp_path / "demo"
-    r = subprocess.run([sys.executable, "-m", "swiftlab.cli", "demo", "--out", str(out), "--n-tasks", "45", "--seeds", "2", "--trials", "4"], capture_output=True, text=True)
-    assert r.returncode == 0, r.stderr
-    run = json.loads((out / "report.json").read_text())
-    assert set(run["eval"]["pairs"]) == {"base->edit_dirty", "base->edit_clean", "base->edit_clean_q4"}
+def test_report_renders(paired_rows, settled_rows, tmp_path):
+    from swiftlab.evaluate import compare_all
+    from swiftlab.scaling import scaling_curve
+    from swiftlab.report import write_report
+    run = {"name": "t", "model": "real-model", "effort": "xhigh", "seeds": 5, "n_tasks": 60,
+           "waste": __import__("swiftlab.settle", fromlist=["waste_summary"]).waste_summary(settled_rows),
+           "scaling": scaling_curve(settled_rows, [15, 30, 60]),
+           "eval": compare_all(paired_rows, base="base", settled_base=settled_rows, n_boot=100)}
     md = markdown(run); html = html_report(run)
-    assert "Paired evaluation" in md and "<svg" in html
-    for f in ["bank.jsonl", "settled.jsonl", "markers.json", "scaling.json", "bundle.json", "search.json", "report.html"]:
-        assert (out / f).exists(), f
+    assert "Paired evaluation" in md and "<svg" in html and "base-&gt;edited" in html or "base->edited" in md
+    paths = write_report(run, tmp_path / "r")
+    assert (tmp_path / "r" / "report.html").exists()

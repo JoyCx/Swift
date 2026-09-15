@@ -72,13 +72,10 @@ class Backend:
 
 def make_backend(cfg, **kw) -> Backend:
     kind = cfg.kind
-    if kind == "mock":
-        from .mock import MockBackend
-        return MockBackend(cfg, **kw)
     if kind == "openai":
         from .openai_compat import OpenAICompatBackend
         return OpenAICompatBackend(cfg, **kw)
     if kind == "hf":
         from .hf import HFBackend
         return HFBackend(cfg, **kw)
-    raise ValueError(f"unknown backend kind {kind!r}")
+    raise ValueError(f"unknown backend kind {kind!r}; use 'openai' (vLLM/llama-server/SGLang) or 'hf' (transformers)")

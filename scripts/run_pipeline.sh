@@ -8,6 +8,9 @@ RUN=${RUN:-runs/swift27b}
 MODEL_DIR=${MODEL_DIR:-/models/Swift-Qwen3.8-27b}
 mkdir -p "$RUN"
 
+# validate the real server + verifiers before spending hours
+swiftlab preflight --config "$CFG"
+
 # 0. serve the BF16 model (separate terminal):
 #    vllm serve $MODEL_DIR --served-model-name ukisai/Swift-Qwen3.8-27b --max-model-len 262144 \
 #         --reasoning-parser qwen3 --seed 0 --enable-prefix-caching

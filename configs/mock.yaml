@@ -1,5 +1,0 @@
-name: swiftlab-mock
-backend: {kind: mock, model: mock-model, concurrency: 1}
-bank: {seeds: [], domains: [coding, knowledge, math]}
-settle: {checkpoints: 8, min_think_tokens: 30}
-eval: {seeds: 3, bootstrap: 500}

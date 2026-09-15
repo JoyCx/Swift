@@ -23,6 +23,13 @@ publish: an **activation-level surgical edit** (no training needed for the first
 | atom | difference-of-means direction for a *protected* concept (coding, knowledge, format, language) |
 | clean direction | dirty direction with the atom-predictable part removed (ridge residualisation) |
 
+## 0.5 Preflight
+
+Before any long run, `swiftlab preflight` validates the real setup end to end: the verifiers
+(coding executes, knowledge greps, math checks), decontamination, and — in server mode — one
+real completion per domain with thinking-split and forced-prefix checks. Nothing in the
+pipeline uses a stand-in model; preflight is how the model-dependent stages are smoke-tested.
+
 ## 1. Task bank: measurable by construction
 
 `swiftlab bank` merges hand-written seeds (`data/tasks/*.jsonl`), unlimited synthetic
@@ -96,8 +103,9 @@ v[l]       = r_clean / ||r_clean||
 
 The dirty vector is polysemantic: in a reasoning model the "re-verify" direction is
 entangled with "I am doing maths/code right now". Removing that component is what keeps
-the capability intact (the mock demo shows the dirty edit breaking more items than the
-clean one at identical strength). Per layer the bundle records separation AUC on held-out
+the capability intact — at identical edit strength an uncleaned direction breaks more
+items than a cleaned one, which the per-domain eval table makes visible. Per layer the
+bundle records separation AUC on held-out
 spans before/after cleaning, energy removed, and cosines with each atom; `best_layers` are
 the top third by clean AUC.
 

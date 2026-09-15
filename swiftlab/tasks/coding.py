@@ -115,7 +115,7 @@ def _merge_intervals(iv):
 
 _REF = {"balanced": _balanced, "digit_sum_until": _digit_sum_until, "merge_intervals": _merge_intervals}
 
-# reference sources (used as the mock model's "correct" answer and as documentation of the spec)
+# reference solutions: the executable spec for each template (also used by preflight self-check)
 REF_SOURCE = {
     "sum_even_squares": "def sum_even_squares(n):\n    return sum(i * i for i in range(n) if i % 2 == 0)",
     "count_vowels": "def count_vowels(s):\n    return sum(c in 'aeiouAEIOU' for c in s)",

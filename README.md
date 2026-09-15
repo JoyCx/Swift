@@ -6,8 +6,9 @@ A harness that reproduces and extends what UkisAI did for
 surgically, quantize without undoing the cut, and prove the result with same-task /
 same-seed / same-context comparisons on tasks that are measurable by construction.
 
-Works on any HF-format model with a thinking block. Runs offline on a mock model so the
-whole pipeline is testable without a GPU.
+Works on any HF-format model with a thinking block. No stand-in model anywhere: you run it
+against a real server (vLLM/llama-server/SGLang) and the real weights. `swiftlab preflight`
+validates that setup before any long run.
 
 ```
 bank → rollout → settle → mine → scale → direction → search → edit → (transfer/LoRA/OPD) → quant → eval → report
@@ -30,19 +31,24 @@ bank → rollout → settle → mine → scale → direction → search → edit
 | `eval` | did it work, per task and per seed? | paired accuracy CI, McNemar, token reduction, **overspend removed**, **needed cut**, per-domain |
 | `report` | show it | `report.md` / `report.html` |
 
-## Quick start (offline, 1 minute)
+## Quick start
 
 ```bash
-pip install -e .            # numpy + pyyaml only
-python -m swiftlab.cli demo --out runs/demo --n-tasks 150 --seeds 3 --trials 24
-open runs/demo/report.html
+pip install -e ".[hf,search]"      # numpy, pyyaml, torch, transformers, safetensors, optuna
+# serve the model, then validate the whole setup (server + verifiers) before a long run:
+swiftlab preflight --config configs/qwen3.8-27b.yaml
+# validate just the task verifiers / decontamination without a server:
+swiftlab preflight --config configs/qwen3.8-27b.yaml --local-only
 ```
 
-The mock model has a planted overthinking direction and a planted capability direction.
-The demo extracts the direction, cleans it, searches γ, edits, evaluates base vs dirty edit
-vs clean edit vs a simulated quant, and writes the same report a real run produces.
+Preflight builds one real task per domain, checks that the coding verifier executes, the
+knowledge grep and math check work, decontamination flags overlap, then (server mode) runs
+one real completion per domain and confirms the thinking block splits, the forced-prefix
+probe that settle depends on works, and token counting works. It exits non-zero on any hard
+failure, so you find a broken chat template or reasoning parser in seconds, not after hours
+of rollouts.
 
-## Real run (Swift-Qwen3.8-27B or any base)
+## Full run (Swift-Qwen3.8-27B or any base)
 
 ```bash
 pip install -e ".[hf,search]"      # torch, transformers, safetensors, optuna
@@ -96,6 +102,11 @@ The activation-only edit (`direction` → `search` → `edit`) remains available
 ```bash
 pip install -e ".[dev]" && pytest -q
 ```
+
+Tests cover the verifiers (real subprocess execution), trace parsing, the SRA/edit/ablation
+linear algebra, the GSPO reward and advantage math, and the analysis stages (mining,
+scaling, paired comparison, SFT-data building) on data fixtures. No model is mocked; the
+parts that need a model are validated live by `swiftlab preflight`.
 
 ## Sources
 

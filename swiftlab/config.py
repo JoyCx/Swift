@@ -7,8 +7,8 @@ import yaml
 
 @dataclass
 class BackendCfg:
-    kind: str = "mock"                 # mock | openai | hf
-    model: str = "mock-model"          # served model name or HF path
+    kind: str = "openai"               # openai (vLLM/llama-server/SGLang) | hf (transformers)
+    model: str = "unset-model"         # served model name or local HF path (set in your config)
     base_url: str = "http://localhost:8000/v1"
     api_key: str = "EMPTY"
     reasoning_effort: str = "xhigh"    # Qwen3.8 template accepts xhigh|medium|low

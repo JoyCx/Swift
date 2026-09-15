@@ -46,8 +46,15 @@ print("prefix probe:", be.complete_prefix(GenRequest("t", "What is 17*23? Put th
 PY
 ```
 
-Both lines must print sensible text. If `think tokens` is 0, the reasoning parser is not
-splitting; if `prefix probe` errors, see pitfalls below.
+Both lines must print sensible text. Or just run the bundled check, which does this plus the
+verifier and decontamination checks and exits non-zero on failure:
+
+```bash
+swiftlab preflight --config configs/qwen3.8-27b.yaml
+```
+
+If `think tokens` is 0, the reasoning parser is not splitting; if the prefix probe errors,
+see pitfalls below.
 
 ## 3. Bank, rollouts, settle
 

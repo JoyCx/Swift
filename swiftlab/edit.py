@@ -34,12 +34,6 @@ def make_edit(bundle: dict, layers: list[int] | None = None, gamma: float = 1.0,
             "matrices": matrices or DEFAULT_MATRICES, "kernel": kernel, "gamma": gamma, "center": center, "width": width}
 
 
-def apply_to_mock(mock, edit: dict, variant: str = "mock-edited"):
-    m = mock.clone()
-    m.apply_edit(edit, variant)
-    return m
-
-
 # --------------------------------------------------------------------- HF / safetensors
 def _tensor_layer_and_module(name: str) -> tuple[int, str] | None:
     m = re.match(r"^(?:model\.|transformer\.)?(?:language_model\.)?layers\.(\d+)\.(.+)\.weight$", name)
