@@ -94,6 +94,7 @@ The activation-only edit (`direction` → `search` → `edit`) remains available
 
 * [docs/ALGORITHM.md](docs/ALGORITHM.md) — every stage, the math, and why it is built this way
 * [docs/QUANT.md](docs/QUANT.md) — the quantization recipe and acceptance thresholds
+* [docs/SETUP_WINDOWS.md](docs/SETUP_WINDOWS.md) — Windows + single RTX 5090 (32 GB): what fits, Blackwell/Python fixes, llama-server measurement path, 8B full-pipeline path
 * [docs/SWIFT_RECIPE.md](docs/SWIFT_RECIPE.md) — the authors' pipeline mapped to commands, with abliteration as an extra stage
 * [docs/RUNBOOK.md](docs/RUNBOOK.md) — step-by-step commands, hardware, time, and first-contact pitfalls for a real model
 
