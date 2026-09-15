@@ -1,0 +1,14 @@
+# Direction extraction / editing needs the weights in-process. Point this at the BF16 checkout.
+name: swift-qwen3.8-27b-hf
+backend:
+  kind: hf
+  model: /models/Swift-Qwen3.8-27b        # local BF16 safetensors directory
+  dtype: bfloat16
+  device_map: auto
+  reasoning_effort: xhigh
+  max_tokens: 4096
+direction:
+  layers: []
+  matrices: [self_attn.o_proj, mlp.down_proj]
+  ridge_lambda: 0.01
+  atoms: [coding, knowledge, format, language]

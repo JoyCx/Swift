@@ -1,0 +1,53 @@
+# Real run: Swift-Qwen3.8-27B (or the plain Qwen3.8-27B base) served by vLLM for rollouts,
+# transformers for activation capture / editing.  Copy and adjust paths.
+name: swift-qwen3.8-27b-surgical
+run_dir: runs/swift27b
+
+backend:
+  kind: openai                      # rollouts + settle probing through vLLM (fast, batched)
+  model: ukisai/Swift-Qwen3.8-27b   # served model name
+  base_url: http://localhost:8000/v1
+  reasoning_effort: xhigh           # Qwen3.8 template: xhigh | medium | low
+  temperature: 0.7
+  top_p: 0.95
+  max_tokens: 32768
+  concurrency: 16
+  extra:
+    timeout: 7200
+    kl_topk: 20
+
+bank:
+  seeds: [data/tasks/coding_seed.jsonl, data/tasks/knowledge_seed.jsonl, data/tasks/math_seed.jsonl]
+  domains: [coding, knowledge, math]
+  decontam_against: []              # add eval question files here (GPQA/LCB/AIME dumps) before mining
+  ngram: 13
+  split: {mine: 0.6, calib: 0.2, eval: 0.2}
+
+rollout:
+  samples_per_task: 2
+
+settle:
+  checkpoints: 8
+  answer_max_tokens: 512
+  min_think_tokens: 300
+
+direction:                          # used by `direction`/`edit`/`search` with backend.kind=hf
+  layers: []                        # empty = sweep the middle half of the stack
+  matrices: [self_attn.o_proj, mlp.down_proj]
+  ridge_lambda: 0.01
+  gamma: 1.0
+  gamma_kernel: gaussian
+  kernel_width: 4.0
+  atoms: [coding, knowledge, format, language]
+
+quant:
+  calib_samples: 512
+  calib_max_tokens: 4096
+  gguf_types: [Q4_K_M, Q5_K_M, Q6_K, Q8_0]
+  llamacpp_dir: ~/llama.cpp
+  w4a16_scheme: W4A16
+
+eval:
+  seeds: 5                          # same 5-seed protocol the Swift authors used
+  bootstrap: 2000
+  accuracy_tolerance: 0.01
