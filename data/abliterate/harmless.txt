@@ -1,0 +1,120 @@
+Write a Flask route that returns the current server time as JSON. Keep it concise.
+Explain how DNS resolves a domain name to an IP address. Explain step by step.
+What is the greenhouse effect and which gases contribute to it?
+How does the water cycle move water through the environment? Explain step by step.
+Explain the difference between a list and a tuple in Python with examples. Keep it concise.
+What is machine learning, explained for a general audience? Keep it concise.
+What is the difference between AC and DC electricity? Keep it concise.
+Explain how airplanes generate lift. Explain step by step.
+Write a Flask route that returns the current server time as JSON.
+Explain how a suspension bridge distributes load. Explain step by step.
+Show how to write and run a basic pytest test for an add function.
+Explain the difference between deep copy and shallow copy in Python. Explain step by step.
+Explain how airplanes generate lift.
+What is the difference between weather and climate? Explain step by step.
+Write a Bash one-liner to find the ten largest files under the current directory.
+Explain how a refrigerator keeps food cold.
+What causes a rainbow to appear after rain?
+Write a Python function that merges two sorted lists into one sorted list. Explain step by step.
+Write a script that renames all .jpeg files in a folder to .jpg. Explain step by step.
+Explain how DNS resolves a domain name to an IP address. Keep it concise.
+Explain how vaccines train the immune system, in plain terms.
+How do noise-cancelling headphones work? Keep it concise.
+Write a Bash one-liner to find the ten largest files under the current directory. Keep it concise.
+Write a function to transpose a matrix represented as a list of lists.
+What causes a rainbow to appear after rain? Keep it concise.
+Explain how bread rises during baking.
+Write a Python function that merges two sorted lists into one sorted list.
+What causes the seasons on Earth? Explain step by step.
+How does photosynthesis convert sunlight into chemical energy? Keep it concise.
+How does a battery store and release energy?
+Explain how git rebase differs from git merge, briefly. Explain step by step.
+Show how to read a CSV file and compute the average of a column in Python. Explain step by step.
+What is the difference between AC and DC electricity?
+Write a Python generator that yields the Fibonacci sequence. Keep it concise.
+What is the greenhouse effect and which gases contribute to it? Explain step by step.
+Show a minimal example of memoization with functools.lru_cache. Keep it concise.
+Explain how DNS resolves a domain name to an IP address.
+Explain what a hash map is and its average time complexity for lookups.
+How does the human eye focus on objects at different distances? Keep it concise.
+Explain the difference between a list and a tuple in Python with examples. Explain step by step.
+Show how to make an HTTP GET request and parse JSON with the requests library.
+Show how to read a CSV file and compute the average of a column in Python.
+Write a function to transpose a matrix represented as a list of lists. Keep it concise.
+What causes the seasons on Earth?
+Write a Flask route that returns the current server time as JSON. Explain step by step.
+Explain how git rebase differs from git merge, briefly. Keep it concise.
+Explain how bread rises during baking. Explain step by step.
+What is the greenhouse effect and which gases contribute to it? Keep it concise.
+How does photosynthesis convert sunlight into chemical energy?
+Show a minimal example of memoization with functools.lru_cache.
+How does the human eye focus on objects at different distances? Explain step by step.
+What is compound interest and how is it calculated? Explain step by step.
+Explain the difference between deep copy and shallow copy in Python. Keep it concise.
+Explain how the internet routes packets between two computers. Explain step by step.
+What is compound interest and how is it calculated? Keep it concise.
+Explain how vaccines train the immune system, in plain terms. Keep it concise.
+How do tides form and why are there two per day in most places?
+Write a regex that validates an email address for a signup form. Keep it concise.
+What is compound interest and how is it calculated?
+Explain how bread rises during baking. Keep it concise.
+Write a function to transpose a matrix represented as a list of lists. Explain step by step.
+How do tides form and why are there two per day in most places? Keep it concise.
+Write a regex that validates an email address for a signup form.
+Explain how a refrigerator keeps food cold. Explain step by step.
+Show how to parse command-line arguments with argparse.
+What is the difference between weather and climate? Keep it concise.
+Explain how the internet routes packets between two computers. Keep it concise.
+How does photosynthesis convert sunlight into chemical energy? Explain step by step.
+Write a Python function that merges two sorted lists into one sorted list. Keep it concise.
+Write a Python generator that yields the Fibonacci sequence.
+What causes a rainbow to appear after rain? Explain step by step.
+Write a function that checks whether a string is a palindrome, ignoring punctuation. Explain step by step.
+How does a battery store and release energy? Explain step by step.
+Explain how a refrigerator keeps food cold. Keep it concise.
+Write a function that checks whether a string is a palindrome, ignoring punctuation. Keep it concise.
+Write a Bash one-liner to find the ten largest files under the current directory. Explain step by step.
+Explain how the internet routes packets between two computers.
+How do noise-cancelling headphones work?
+Write a SQL query that returns the top five customers by total order value. Keep it concise.
+Show how to make an HTTP GET request and parse JSON with the requests library. Explain step by step.
+Write a Python generator that yields the Fibonacci sequence. Explain step by step.
+Write a SQL query that returns the top five customers by total order value. Explain step by step.
+Write a Python context manager that times the code inside it. Explain step by step.
+Show how to parse command-line arguments with argparse. Keep it concise.
+Explain the difference between deep copy and shallow copy in Python.
+Write a script that renames all .jpeg files in a folder to .jpg. Keep it concise.
+How does the human eye focus on objects at different distances?
+How do tides form and why are there two per day in most places? Explain step by step.
+Write a Python context manager that times the code inside it.
+Write a function that checks whether a string is a palindrome, ignoring punctuation.
+Write a SQL query that returns the top five customers by total order value.
+Explain how git rebase differs from git merge, briefly.
+How does the water cycle move water through the environment? Keep it concise.
+Show how to read a CSV file and compute the average of a column in Python. Keep it concise.
+Explain how to set up a virtual environment and install dependencies for a Python project. Keep it concise.
+How do noise-cancelling headphones work? Explain step by step.
+Explain how to set up a virtual environment and install dependencies for a Python project.
+How does the water cycle move water through the environment?
+Explain the difference between a list and a tuple in Python with examples.
+Write a script that renames all .jpeg files in a folder to .jpg.
+Explain how a suspension bridge distributes load. Keep it concise.
+Show how to write and run a basic pytest test for an add function. Explain step by step.
+Explain how vaccines train the immune system, in plain terms. Explain step by step.
+How does a battery store and release energy? Keep it concise.
+What is the difference between weather and climate?
+Write a regex that validates an email address for a signup form. Explain step by step.
+Explain how to set up a virtual environment and install dependencies for a Python project. Explain step by step.
+Explain how airplanes generate lift. Keep it concise.
+What is machine learning, explained for a general audience?
+What is machine learning, explained for a general audience? Explain step by step.
+Show how to write and run a basic pytest test for an add function. Keep it concise.
+Show how to parse command-line arguments with argparse. Explain step by step.
+What is the difference between AC and DC electricity? Explain step by step.
+Explain how a suspension bridge distributes load.
+Show how to make an HTTP GET request and parse JSON with the requests library. Keep it concise.
+Explain what a hash map is and its average time complexity for lookups. Keep it concise.
+Show a minimal example of memoization with functools.lru_cache. Explain step by step.
+Write a Python context manager that times the code inside it. Keep it concise.
+What causes the seasons on Earth? Keep it concise.
+Explain what a hash map is and its average time complexity for lookups. Explain step by step.

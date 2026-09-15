@@ -30,8 +30,16 @@ python scripts/train_penalized_lora.py --model "$BASE" --sft "$RUN/sft.jsonl" --
 python scripts/merge_lora.py --base "$BASE" --lora "$RUN/lora-pen" --out "$RUN/model-pen"
 
 # ---- 4. "restored accuracy: on-policy distillation (+ ThinkingCap adapter chunks)" ---------------
+#   two restore options — run either or both (OPD then GSPO is a good order):
+#   (a) on-policy distillation from the frozen base (cheap, dense token-level signal):
 python scripts/opd_restore.py --student "$RUN/model-pen" --teacher "$BASE" --bank "$RUN/bank.jsonl" --out "$RUN/lora-opd" --steps 300
 python scripts/merge_lora.py --base "$RUN/model-pen" --lora "$RUN/lora-opd" --out "$RUN/model-swift"
+#   (b) GSPO RL with VERIFIABLE rewards (recovers accuracy AND holds thinking short via the
+#       settle-keyed brevity term; more compute, directly optimises the eval metric):
+python scripts/gspo_restore.py --model "$RUN/model-swift" --bank "$RUN/bank.jsonl" --settled "$RUN/settled.jsonl"        --out "$RUN/lora-gspo" --group-size 8 --steps 400 --clip 0.2 --brevity-coef 0.3
+python scripts/merge_lora.py --base "$RUN/model-swift" --lora "$RUN/lora-gspo" --out "$RUN/model-swift-rl"
+#   pick the model that wins the paired eval (step 7); default the rest of the pipeline to it:
+ln -sfn "$(basename "$RUN/model-swift-rl")" "$RUN/model-swift" 2>/dev/null || true
 # optional adapter-chunk transfer (same architecture family only; re-evaluate after):
 # swiftlab transfer --target "$RUN/model-swift" --donor "$DONOR" --donor-base "$DONOR_BASE" --alpha 0.4 --keep 0.2 --only mlp --out "$RUN/model-swift-tv"
 

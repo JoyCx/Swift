@@ -77,7 +77,7 @@ turns any fact table you own into grep-verified tasks. List your benchmark dumps
 
 1. diverse decontaminated rollouts → settle → mine (`bank`, `rollout`, `settle`, `mine`, `scale`)
 2. `swiftlab sftdata` + `scripts/train_penalized_lora.py` — LoRA SFT with CE + β·P(mined tokens | think)
-3. `scripts/opd_restore.py` — on-policy distillation from the frozen base to restore accuracy; optional `swiftlab transfer` for ThinkingCap adapter chunks
+3. restore accuracy: `scripts/opd_restore.py` (on-policy distillation) and/or `scripts/gspo_restore.py` (GSPO RL with verifiable rewards + settle-keyed brevity); optional `swiftlab transfer` for ThinkingCap adapter chunks
 4. `swiftlab abliterate` — extra: surgical refusal ablation with the overthinking direction as a protected atom, searched on refusal + KL with thinking/accuracy constraints
 5. `swiftlab quant` → `swiftlab eval` — base vs swift vs abliterated vs quant, same seeds
 
