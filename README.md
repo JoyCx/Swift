@@ -81,6 +81,7 @@ turns any fact table you own into grep-verified tasks. List your benchmark dumps
 
 * [docs/ALGORITHM.md](docs/ALGORITHM.md) — every stage, the math, and why it is built this way
 * [docs/QUANT.md](docs/QUANT.md) — the quantization recipe and acceptance thresholds
+* [docs/RUNBOOK.md](docs/RUNBOOK.md) — step-by-step commands, hardware, time, and first-contact pitfalls for a real model
 
 ## Tests
 
