@@ -16,6 +16,14 @@ backend:
     timeout: 7200
     send_reasoning_effort_top_level: false   # llama-server rejects unknown top-level keys
     kl_topk: 20
+    # settle probing force-closes the think block; if llama-server lacks continue_final_message
+    # the backend falls back to /completions with this Qwen3 (ChatML) template:
+    prompt_template: "<|im_start|>system
+{system}<|im_end|>
+<|im_start|>user
+{user}<|im_end|>
+<|im_start|>assistant
+{assistant}"
 bank:
   seeds: [data/tasks/coding_seed.jsonl, data/tasks/knowledge_seed.jsonl, data/tasks/math_seed.jsonl]
   domains: [coding, knowledge, math]
