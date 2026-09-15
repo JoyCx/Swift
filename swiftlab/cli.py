@@ -204,6 +204,73 @@ def cmd_eval(args):
     print(json.dumps({"arms": {k: v["accuracy"] for k, v in res["arms"].items()}, "report": paths}))
 
 
+def cmd_sftdata(args):
+    from .sftdata import build_sft_rows, write_sft
+    cfg = _cfg(args)
+    bank, _ = _tasks(args, cfg)
+    be = _backend(cfg, bank) if not args.no_regen else None
+    rows = build_sft_rows(read_jsonl(args.settled), bank.by_id, backend=be, max_per_task=args.max_per_task)
+    print(json.dumps(write_sft(rows, args.out)))
+
+
+def cmd_abliterate(args):
+    from .abliterate import build_refusal_bundle, load_prompts, measure, score as ab_score
+    from .directions import load_bundle, save_bundle
+    from .edit import make_edit, apply_in_place, restore_in_place, apply_to_mock, apply_to_safetensors
+    from .search import kl_divergence, run_search
+    from .rollout import run_rollouts
+    cfg = _cfg(args)
+    bank, calib = _tasks(args, cfg, "calib")
+    calib = bank.__class__(calib).sample(args.max_tasks or 24, seed=1)
+    be = _backend(cfg, bank)
+    harmful, harmless = load_prompts(args.harmful), load_prompts(args.harmless)
+    protect = {}
+    if args.protect_bundle:
+        ob = load_bundle(args.protect_bundle)
+        protect["overthink"] = {l: d["v"] for l, d in ob["layers"].items()}
+    rb = build_refusal_bundle(be, harmful, harmless, layers=cfg.direction.layers or None, atoms=args.atoms.split(",") if args.atoms else [],
+                              protect=protect, ridge_lambda=cfg.direction.ridge_lambda)
+    save_bundle(rb, args.out_bundle)
+    for l, d in sorted(rb["layers"].items()):
+        print(f"layer {l:>3} auc dirty={d['auc_dirty']:.3f} clean={d['auc_clean']:.3f} energy removed={d['energy_removed']:.2f} cos={ {k: round(v, 2) for k, v in d['cos_atoms_clean'].items()} }")
+    base_m = measure(be, harmful[-max(8, len(harmful) // 4):], effort=cfg.backend.reasoning_effort)
+    base_rows = run_rollouts(be, calib, 1, Path(args.out).parent / "ab_base.jsonl", arm="base", resume=False)
+    base_acc = sum(r["correct"] for r in base_rows) / len(base_rows); base_think = sum(r["think_tokens"] for r in base_rows)
+    kl_prompts = [t.prompt for t in calib[:12]]; base_dist = be.next_token_dist(kl_prompts)
+    print("base:", json.dumps(base_m))
+    n = [0]
+
+    def evaluate(edit):
+        n[0] += 1
+        if cfg.backend.kind == "mock":
+            eb = apply_to_mock(be, edit, "mock-abliterated"); m = measure(eb, harmful[-max(8, len(harmful) // 4):])
+            rows = run_rollouts(eb, calib, 1, Path(args.out).parent / "ab_trial.jsonl", arm="trial", resume=False)
+            kl = kl_divergence(base_dist, eb.next_token_dist(kl_prompts))
+        else:
+            saved = apply_in_place(be.model, edit)
+            try:
+                m = measure(be, harmful[-max(8, len(harmful) // 4):], effort=cfg.backend.reasoning_effort)
+                rows = run_rollouts(be, calib, 1, Path(args.out).parent / "ab_trial.jsonl", concurrency=1, arm="trial", resume=False)
+                kl = kl_divergence(base_dist, be.next_token_dist(kl_prompts))
+            finally:
+                restore_in_place(be.model, saved)
+        return {"refusal_rate": m["refusal_rate"], "kl": kl, "think_ratio": sum(r["think_tokens"] for r in rows) / max(1, base_think),
+                "acc_delta": sum(r["correct"] for r in rows) / len(rows) - base_acc}
+
+    import swiftlab.search as S
+    orig = S.score
+    S.score = lambda metrics, w_kl=1.0, acc_tol=0.01, acc_penalty=10.0: ab_score(metrics, w_kl=w_kl, acc_tol=acc_tol)
+    try:
+        res = run_search(rb, evaluate, n_trials=args.trials, w_kl=args.w_kl, acc_tol=cfg.eval.accuracy_tolerance, space={"gamma": (0.5, 1.5)})
+    finally:
+        S.score = orig
+    write_json(args.out, {"base": base_m, "best": res["best"], "trials": res["trials"], "best_edit": res["best_edit"], "method": res["method"]})
+    print(json.dumps({"best_params": res["best"]["params"], "best_metrics": res["best"]["metrics"]}))
+    if args.model_dir:
+        r = apply_to_safetensors(args.model_dir, args.apply_out, res["best_edit"])
+        print(json.dumps({"touched": len(r["touched"]), "out": r["out_dir"]}))
+
+
 def cmd_report(args):
     from .report import write_report
     run = read_json(args.run_json)
@@ -252,6 +319,14 @@ def main(argv=None):
     s = sub.add_parser("eval", help="paired multi-arm evaluation"); common(s)
     s.add_argument("--arm", action="append", required=True, help="name:kind:model  (openai: model@base_url)"); s.add_argument("--base", default="base")
     s.add_argument("--seeds", type=int); s.add_argument("--max-tasks", type=int, default=0); s.add_argument("--settled", default=None); s.add_argument("--out", default="runs/eval"); s.set_defaults(fn=cmd_eval)
+    s = sub.add_parser("sftdata", help="build penalised-SFT dataset from settled base rollouts"); common(s)
+    s.add_argument("--settled", required=True); s.add_argument("--max-per-task", type=int, default=2); s.add_argument("--no-regen", action="store_true", help="skip forced-answer regeneration for derailed traces")
+    s.add_argument("--out", default="runs/sft.jsonl"); s.set_defaults(fn=cmd_sftdata)
+    s = sub.add_parser("abliterate", help="surgical refusal ablation protected by the overthinking direction"); common(s)
+    s.add_argument("--harmful", required=True); s.add_argument("--harmless", required=True); s.add_argument("--protect-bundle", default=None, help="bundle.json from `direction`")
+    s.add_argument("--atoms", default="coding,knowledge,format"); s.add_argument("--trials", type=int, default=20); s.add_argument("--w-kl", type=float, default=1.0)
+    s.add_argument("--max-tasks", type=int, default=0); s.add_argument("--out-bundle", default="runs/refusal_bundle.json"); s.add_argument("--out", default="runs/abliterate.json")
+    s.add_argument("--model-dir", default=None); s.add_argument("--apply-out", default=None); s.set_defaults(fn=cmd_abliterate)
     s = sub.add_parser("report", help="render report from run json"); s.add_argument("--run-json", required=True); s.add_argument("--out", default="runs/report"); s.set_defaults(fn=cmd_report)
     s = sub.add_parser("demo", help="full pipeline on the mock model"); s.add_argument("--out", default="runs/demo")
     s.add_argument("--n-tasks", type=int, default=60); s.add_argument("--seeds", type=int, default=3); s.add_argument("--trials", type=int, default=20); s.set_defaults(fn=cmd_demo)

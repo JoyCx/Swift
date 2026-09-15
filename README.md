@@ -71,16 +71,24 @@ For knowledge at scale, `knowledge_tasks_from_table(rows, "What is the {field} o
 turns any fact table you own into grep-verified tasks. List your benchmark dumps under
 `bank.decontam_against` before mining.
 
-## Training-based steps (optional)
+## The Swift recipe itself (training-based) + abliteration
 
-* `scripts/train_penalized_lora.py` — Swift's penalised SFT: CE + β·P(mined tokens | think)
-* `scripts/opd_restore.py` — on-policy distillation from the frozen base to restore accuracy
-* `swiftlab transfer` — ThinkingCap-style adapter-chunk transfer between same-architecture models
+`scripts/run_swift_recipe.sh` chains the authors' actual pipeline, from the plain base:
+
+1. diverse decontaminated rollouts → settle → mine (`bank`, `rollout`, `settle`, `mine`, `scale`)
+2. `swiftlab sftdata` + `scripts/train_penalized_lora.py` — LoRA SFT with CE + β·P(mined tokens | think)
+3. `scripts/opd_restore.py` — on-policy distillation from the frozen base to restore accuracy; optional `swiftlab transfer` for ThinkingCap adapter chunks
+4. `swiftlab abliterate` — extra: surgical refusal ablation with the overthinking direction as a protected atom, searched on refusal + KL with thinking/accuracy constraints
+5. `swiftlab quant` → `swiftlab eval` — base vs swift vs abliterated vs quant, same seeds
+
+Step-by-step mapping of their write-up to commands: [docs/SWIFT_RECIPE.md](docs/SWIFT_RECIPE.md).
+The activation-only edit (`direction` → `search` → `edit`) remains available as a cheaper first cut.
 
 ## Docs
 
 * [docs/ALGORITHM.md](docs/ALGORITHM.md) — every stage, the math, and why it is built this way
 * [docs/QUANT.md](docs/QUANT.md) — the quantization recipe and acceptance thresholds
+* [docs/SWIFT_RECIPE.md](docs/SWIFT_RECIPE.md) — the authors' pipeline mapped to commands, with abliteration as an extra stage
 * [docs/RUNBOOK.md](docs/RUNBOOK.md) — step-by-step commands, hardware, time, and first-contact pitfalls for a real model
 
 ## Tests

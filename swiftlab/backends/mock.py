@@ -27,6 +27,7 @@ MARK_PHRASES = ["Wait, let me double-check that.", "Hmm, actually maybe I should
 _OT_RE = re.compile(r"\b(wait|hmm|double-check|reconsider|verify|re-examine|hold on|actually)\b", re.I)
 _CAP_RE = re.compile(r"(def |```|return |Step \d|therefore|compute)", re.I)
 _FMT_RE = re.compile(r"(Final answer|\\boxed)", re.I)
+_HARM_TAG = "[harmful]"
 
 # tiny vocabulary so logit_bias tests can address marker tokens by id
 MOCK_VOCAB = {w: i for i, w in enumerate(["wait", "hmm", "actually", "double-check", "reconsider", "verify", "step", "the", "return", "answer"])}
@@ -55,7 +56,11 @@ class MockBackend(Backend):
         self.c_star = _unit(c)
         f = g.standard_normal(hidden); f -= f @ self.d_star * self.d_star; f -= f @ self.c_star * self.c_star
         self.f_star = _unit(f)
-        self.state = {"overthink_rate": 0.6, "acc_delta": 0.0, "drift": 0.0, "variant": "mock-base"}
+        # refusal direction, deliberately correlated with the overthinking direction (cos ~0.4)
+        rr = g.standard_normal(hidden); rr -= rr @ self.c_star * self.c_star; rr -= rr @ self.f_star * self.f_star
+        rr = _unit(rr - (rr @ self.d_star) * self.d_star)
+        self.r_star = _unit(0.4 * self.d_star + 0.917 * rr)
+        self.state = {"overthink_rate": 0.6, "acc_delta": 0.0, "drift": 0.0, "refuse_rate": 0.9, "variant": "mock-base"}
         self.tasks = dict(getattr(bank, "by_id", {}) or {})
         self.calls = 0
 
@@ -136,6 +141,9 @@ class MockBackend(Backend):
         plan = self._plan(req, self._effective_rate(req))
         thinking, _ = self._render(plan)
         answer = self._answer(req, plan.correct)
+        if _HARM_TAG in req.prompt and rng_for(req.task_id, req.seed, "refuse").random() < self.state["refuse_rate"]:
+            thinking = "Step 1: this request looks sensitive. Wait, let me double-check the policy. I should decline."
+            answer = "I'm sorry, but I can't help with that."
         tt, at = self.count_tokens(thinking), self.count_tokens(answer)
         lat = (tt + at) / 400.0          # pretend 400 tok/s
         return Generation(req.task_id, req.seed, thinking, answer, tt, at, lat, model=self.state["variant"],
@@ -158,13 +166,14 @@ class MockBackend(Backend):
         for text, (a, b) in zip(texts, spans):
             piece = text[a:b]
             ot = 1.0 if _OT_RE.search(piece) else 0.0
+            harm = 1.0 if _HARM_TAG in text else 0.0
             cap = 1.0 if _CAP_RE.search(piece) else 0.0
             fmt = 1.0 if _FMT_RE.search(piece) else 0.0
             g = np.random.default_rng(derive_seed(text, a, b))
             for l in layers:
                 w = self._layer_w(l)
                 noise = 0.7 * g.standard_normal(self.hidden)
-                vec = noise + w * (2.0 * ot * self.d_star + 1.1 * ot * self.c_star + 0.5 * cap * self.c_star + 1.2 * fmt * self.f_star)
+                vec = noise + w * (2.0 * ot * self.d_star + 1.1 * ot * self.c_star + 0.5 * cap * self.c_star + 1.2 * fmt * self.f_star + 2.5 * harm * self.r_star)
                 out[l].append(vec)
         return {l: np.stack(v) for l, v in out.items()}
 
@@ -180,13 +189,15 @@ class MockBackend(Backend):
     # ------------------------------------------------------------------ surgery on the mock
     def apply_edit(self, edit: dict, variant: str = "mock-edited") -> dict:
         """edit = {"layers": {l: {"v": unit vec, "gamma": g}}}. Returns the new state."""
-        eff, dmg = 0.0, 0.0
+        eff, dmg, ref = 0.0, 0.0, 0.0
         for l, spec in edit["layers"].items():
             v = _unit(np.asarray(spec["v"], dtype=float)); gam = float(spec["gamma"]); w = self._layer_w(int(l))
             eff += gam * w * float(v @ self.d_star) ** 2
             dmg += gam * w * float(v @ self.c_star) ** 2
+            ref += gam * w * float(v @ self.r_star) ** 2
         n = max(1, len(edit["layers"]))
-        eff /= n; dmg /= n
+        eff /= n; dmg /= n; ref /= n
+        self.state["refuse_rate"] = self.state["refuse_rate"] * max(0.0, 1.0 - 1.4 * ref)
         self.state["overthink_rate"] = self.state["overthink_rate"] * max(0.0, 1.0 - 1.4 * eff)
         self.state["acc_delta"] -= 3.0 * dmg
         self.state["drift"] += 0.02 * eff + 2.0 * dmg

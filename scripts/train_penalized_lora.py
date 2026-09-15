@@ -2,10 +2,10 @@
 """Penalized LoRA SFT (the Swift recipe, step 1): cross-entropy on the model's own traces plus a
 penalty on the probability mass assigned to mined overthinking tokens at think positions.
 
-Data: settled.jsonl rows (use only correct traces, truncated at the settle point so the
+Data: sft.jsonl from `swiftlab sftdata` (correct traces, truncated at the settle point so the
 target trace is the *needed* part).  Penalty vocab: markers.json from `swiftlab mine`.
 
-  python scripts/train_penalized_lora.py --model /models/Qwen3.8-27B --settled runs/settled.jsonl \
+  python scripts/train_penalized_lora.py --model /models/Qwen3.8-27B --sft runs/sft.jsonl \
       --markers runs/markers.json --out runs/lora-penalized --beta 0.5 --epochs 1
 """
 import argparse, json, random
@@ -20,10 +20,10 @@ from swiftlab.penalty import penalized_loss, think_position_mask
 from swiftlab.mining import penalty_vocab_to_logit_bias
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--model", required=True); ap.add_argument("--settled", required=True); ap.add_argument("--markers", required=True)
+ap.add_argument("--model", required=True); ap.add_argument("--sft", required=True); ap.add_argument("--markers", required=True)
 ap.add_argument("--out", required=True); ap.add_argument("--beta", type=float, default=0.5); ap.add_argument("--lr", type=float, default=1e-4)
 ap.add_argument("--epochs", type=int, default=1); ap.add_argument("--bs", type=int, default=2); ap.add_argument("--max-len", type=int, default=8192)
-ap.add_argument("--rank", type=int, default=32); ap.add_argument("--truncate-at-settle", action="store_true", default=True)
+ap.add_argument("--rank", type=int, default=32); ap.add_argument("--reasoning-effort", default="xhigh")
 ap.add_argument("--think-open", default="<think>"); ap.add_argument("--think-close", default="</think>")
 args = ap.parse_args()
 
@@ -37,17 +37,19 @@ penalty_ids = sorted(penalty_vocab_to_logit_bias(markers, tok, strength=0).keys(
 print(f"penalty token ids: {len(penalty_ids)}")
 open_id = tok.convert_tokens_to_ids(args.think_open); close_id = tok.convert_tokens_to_ids(args.think_close)
 
-rows = [json.loads(l) for l in open(args.settled)]
-rows = [r for r in rows if r["correct"] and r.get("settle", {}).get("category") in ("tight", "overspent")]
+rows = [json.loads(l) for l in open(args.sft)]
 random.Random(0).shuffle(rows)
 
 
 def build(r):
     th = r["thinking"]
-    if args.truncate_at_settle and r["settle"].get("settle_char"):
-        th = th[: r["settle"]["settle_char"]]
-    msgs = [{"role": "user", "content": r.get("prompt", "")}]
-    prompt = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True)
+    msgs = ([{"role": "system", "content": r["context"]}] if r.get("context") else []) + [{"role": "user", "content": r["prompt"]}]
+    try:
+        prompt = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True, reasoning_effort=args.reasoning_effort)
+    except TypeError:
+        prompt = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True)
+    if prompt.rstrip().endswith(args.think_open):          # template already opened the think block
+        prompt = prompt.rstrip()[: -len(args.think_open)]
     full = prompt + f"{args.think_open}\n{th}\n{args.think_close}\n\n{r['answer']}" + tok.eos_token
     ids = tok(full, add_special_tokens=False, truncation=True, max_length=args.max_len)["input_ids"]
     n_prompt = len(tok(prompt, add_special_tokens=False)["input_ids"])
@@ -63,14 +65,7 @@ def collate(batch):
     return {"input_ids": ids, "labels": lab, "attention_mask": att}
 
 
-# rollouts store task_id; join prompt text back from the bank if needed
-bank = {}
-bank_path = Path(args.settled).parent / "bank.jsonl"
-if bank_path.exists():
-    bank = {json.loads(l)["id"]: json.loads(l)["prompt"] for l in open(bank_path)}
-for r in rows:
-    r.setdefault("prompt", bank.get(r["task_id"], ""))
-data = [build(r) for r in rows if r["prompt"]]
+data = [build(r) for r in rows if r.get("prompt")]
 dl = DataLoader(data, batch_size=args.bs, shuffle=True, collate_fn=collate)
 opt = torch.optim.AdamW([p for p in model.parameters() if p.requires_grad], lr=args.lr)
 model.train()
