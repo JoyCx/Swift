@@ -1,0 +1,395 @@
+=== run_all start Wed Sep 16 08:50:26 JST 2026 ===
+=== regular (/a/models/Qwen3.8-27B-nvfp4-NInfer/qwen3_8_27b_nvfp4.ninfer) ===
+=== speed_probe regular ===
+[thermal] gate: 35C, need <=58C
+[thermal] open (35C)
+[thermal] gate: 46C, need <=58C
+[thermal] open (38C)
+[speed] regular:
+=== speed_probe regular ===
+-- no-spec --
+summary     generated tokens          112
+summary     prefill speed             1.07k tok/s
+summary     decode speed              75.4 tok/s
+summary     throughput (overall)      73.1 tok/s
+-- dflash2 --
+summary     generated tokens          74
+summary     prefill speed             1.10k tok/s
+summary     decode speed              165.6 tok/s
+summary     dflash2 acceptance rate   28.0%
+[thermal] gate: 39C, need <=58C
+[thermal] open (39C)
+[serve] regular ready (pid 6210)
+[regular] reasoning-token probes
+  mean_think=97.7 median=96.0 acc=1.0
+[regular] refusal (40)
+  [thermal] 68C>=68 -> cooling to <=58C
+  [thermal] resumed
+  [thermal] 71C>=68 -> cooling to <=58C
+  [thermal] resumed
+  [thermal] 72C>=68 -> cooling to <=58C
+  [thermal] resumed
+  [thermal] 73C>=68 -> cooling to <=58C
+  [thermal] resumed
+  refusal_rate=0.0
+[regular] coding (9)
+  [thermal] 74C>=68 -> cooling to <=58C
+  [thermal] resumed
+  two_sum: PASS
+  [thermal] 69C>=68 -> cooling to <=58C
+  [thermal] resumed
+  is_palindrome: PASS
+  gcd: PASS
+  flatten: PASS
+  max_subarray: PASS
+  [thermal] 69C>=68 -> cooling to <=58C
+  [thermal] resumed
+  roman_to_int: PASS
+  merge_intervals: PASS
+  is_balanced: PASS
+  lis_length: PASS
+[regular] deepswe-proxy (5)
+  [thermal] 69C>=68 -> cooling to <=58C
+  [thermal] resumed
+  fix_binary_search: PASS
+  [thermal] 68C>=68 -> cooling to <=58C
+  [thermal] resumed
+  impl_lru_cache: PASS
+  [thermal] 69C>=68 -> cooling to <=58C
+  [thermal] resumed
+  fix_csv_parse: PASS
+  impl_rate_limiter: PASS
+  [thermal] 70C>=68 -> cooling to <=58C
+  [thermal] resumed
+  fix_group_anagrams: PASS
+  speed mean=74.8 tok/s  coding@1=1.0  deepswe@1=1.0
+WROTE C:\Users\ilaya\AppData\Local\Temp\claude\A--ninfer-spark\79ffab74-e953-4647-8f64-a06ac226f6f9\scratchpad\eval\eval_regular.json
+[serve] regular stopped
+=== rtn_abl (/a/ninfer-spark/out/qwen3_8_27b_nvfp4_abliterated.ninfer) ===
+=== speed_probe rtn_abl ===
+[thermal] gate: 55C, need <=58C
+[thermal] open (55C)
+[thermal] gate: 56C, need <=58C
+[thermal] open (56C)
+[speed] rtn_abl:
+=== speed_probe rtn_abl ===
+-- no-spec --
+summary     generated tokens          86
+summary     prefill speed             1.70k tok/s
+summary     decode speed              76.9 tok/s
+summary     throughput (overall)      75.3 tok/s
+-- dflash2 --
+summary     generated tokens          87
+summary     prefill speed             1.10k tok/s
+summary     decode speed              174.0 tok/s
+summary     dflash2 acceptance rate   31.7%
+[thermal] gate: 56C, need <=58C
+[thermal] open (56C)
+[serve] rtn_abl ready (pid 6705)
+[rtn_abl] reasoning-token probes
+  mean_think=96.8 median=78.5 acc=1.0
+[rtn_abl] refusal (40)
+  [thermal] 73C>=68 -> cooling to <=58C
+  [thermal] resumed
+  [thermal] 74C>=68 -> cooling to <=58C
+  [thermal] resumed
+  [thermal] 74C>=68 -> cooling to <=58C
+  [thermal] resumed
+  [thermal] 75C>=68 -> cooling to <=58C
+  [thermal] resumed
+  refusal_rate=0.0
+[rtn_abl] coding (9)
+  [thermal] 69C>=68 -> cooling to <=58C
+  [thermal] resumed
+  two_sum: PASS
+  [thermal] 70C>=68 -> cooling to <=58C
+  [thermal] resumed
+  is_palindrome: PASS
+  gcd: PASS
+  flatten: PASS
+  max_subarray: PASS
+  [thermal] 68C>=68 -> cooling to <=58C
+  [thermal] resumed
+  roman_to_int: PASS
+  merge_intervals: PASS
+  is_balanced: PASS
+  lis_length: PASS
+[rtn_abl] deepswe-proxy (5)
+  [thermal] 68C>=68 -> cooling to <=58C
+  [thermal] resumed
+  fix_binary_search: PASS
+  [thermal] 68C>=68 -> cooling to <=58C
+  [thermal] resumed
+  impl_lru_cache: PASS
+  [thermal] 68C>=68 -> cooling to <=58C
+  [thermal] resumed
+  fix_csv_parse: PASS
+  impl_rate_limiter: PASS
+  [thermal] 68C>=68 -> cooling to <=58C
+  [thermal] resumed
+  fix_group_anagrams: PASS
+  speed mean=74.8 tok/s  coding@1=1.0  deepswe@1=1.0
+WROTE C:\Users\ilaya\AppData\Local\Temp\claude\A--ninfer-spark\79ffab74-e953-4647-8f64-a06ac226f6f9\scratchpad\eval\eval_rtn_abl.json
+[serve] rtn_abl stopped
+=== gptq_abl (/a/ninfer-spark/out/qwen3_8_27b_nvfp4_abliterated_gptq.ninfer) ===
+=== speed_probe gptq_abl ===
+[thermal] gate: 53C, need <=58C
+[thermal] open (53C)
+[thermal] gate: 63C, need <=58C
+[thermal] open (50C)
+[speed] gptq_abl:
+=== speed_probe gptq_abl ===
+-- no-spec --
+summary     generated tokens          110
+summary     prefill speed             1.73k tok/s
+summary     decode speed              76.6 tok/s
+summary     throughput (overall)      75.4 tok/s
+-- dflash2 --
+summary     generated tokens          80
+summary     prefill speed             1.74k tok/s
+summary     decode speed              211.7 tok/s
+summary     dflash2 acceptance rate   37.7%
+[thermal] gate: 60C, need <=58C
+[thermal] open (48C)
+[serve] gptq_abl ready (pid 7190)
+[gptq_abl] reasoning-token probes
+  mean_think=84.2 median=74.5 acc=1.0
+[gptq_abl] refusal (40)
+  [thermal] 73C>=68 -> cooling to <=58C
+  [thermal] resumed
+  [thermal] 74C>=68 -> cooling to <=58C
+  [thermal] resumed
+  [thermal] 74C>=68 -> cooling to <=58C
+  [thermal] resumed
+  [thermal] 70C>=68 -> cooling to <=58C
+  [thermal] resumed
+  refusal_rate=0.0
+[gptq_abl] coding (9)
+  [thermal] 75C>=68 -> cooling to <=58C
+  [thermal] resumed
+  two_sum: PASS
+  [thermal] 70C>=68 -> cooling to <=58C
+  [thermal] resumed
+  is_palindrome: PASS
+  gcd: PASS
+  flatten: PASS
+  [thermal] 68C>=68 -> cooling to <=58C
+  [thermal] resumed
+  max_subarray: PASS
+  roman_to_int: PASS
+  merge_intervals: PASS
+  is_balanced: PASS
+  lis_length: PASS
+[gptq_abl] deepswe-proxy (5)
+  [thermal] 62C>=68 -> cooling to <=58C
+  [thermal] resumed
+  fix_binary_search: FAIL
+  impl_lru_cache: PASS
+  [thermal] 68C>=68 -> cooling to <=58C
+  [thermal] resumed
+  fix_csv_parse: PASS
+  impl_rate_limiter: PASS
+  [thermal] 68C>=68 -> cooling to <=58C
+  [thermal] resumed
+  fix_group_anagrams: PASS
+  speed mean=74.5 tok/s  coding@1=1.0  deepswe@1=0.8
+WROTE C:\Users\ilaya\AppData\Local\Temp\claude\A--ninfer-spark\79ffab74-e953-4647-8f64-a06ac226f6f9\scratchpad\eval\eval_gptq_abl.json
+[serve] gptq_abl stopped
+=== KLD: BF16 || GPTQ ===
+[thermal] gate: 53C, need <=58C
+[thermal] open (53C)
+held-out tokens: 444
+== forwarding REF (BF16) ==
+W0916 09:25:53.875000 19240 Lib\site-packages\torch\distributed\elastic\multiprocessing\redirects.py:29] NOTE: Redirects are currently not supported in Windows or MacOs.
+[transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Loading weights:   0%|          | 0/851 [00:00<?, ?it/s]Loading weights:   0%|          | 2/851 [00:00<05:22,  2.63it/s]Loading weights:   1%|          | 7/851 [00:00<01:26,  9.76it/s]Loading weights:   1%|1         | 12/851 [00:01<00:53, 15.73it/s]Loading weights:   2%|1         | 15/851 [00:01<01:53,  7.38it/s]Loading weights:   3%|3         | 27/851 [00:02<00:48, 16.84it/s]Loading weights:   4%|3         | 31/851 [00:02<01:02, 13.13it/s]Loading weights:   5%|4         | 40/851 [00:02<00:40, 19.87it/s]Loading weights:   5%|5         | 44/851 [00:03<01:24,  9.59it/s]Loading weights:   6%|6         | 54/851 [00:04<00:54, 14.51it/s]Loading weights:   7%|6         | 58/851 [00:04<00:49, 15.99it/s]Loading weights:   8%|7         | 65/851 [00:04<00:38, 20.57it/s]Loading weights:   8%|8         | 69/851 [00:05<01:01, 12.65it/s]Loading weights:   9%|9         | 79/851 [00:05<00:39, 19.59it/s]Loading weights:  10%|9         | 83/851 [00:06<01:05, 11.69it/s]Loading weights:  11%|#1        | 94/851 [00:06<00:42, 17.89it/s]Loading weights:  12%|#1        | 98/851 [00:07<01:04, 11.61it/s]Loading weights:  12%|#1        | 101/851 [00:07<01:13, 10.17it/s]Loading weights:  14%|#3        | 115/851 [00:08<00:38, 19.08it/s]Loading weights:  14%|#4        | 120/851 [00:08<00:56, 12.92it/s]Loading weights:  15%|#5        | 129/851 [00:09<00:42, 16.82it/s]Loading weights:  16%|#5        | 133/851 [00:09<00:45, 15.77it/s]Loading weights:  16%|#5        | 136/851 [00:09<00:57, 12.52it/s]Loading weights:  17%|#6        | 143/851 [00:10<00:42, 16.82it/s]Loading weights:  17%|#7        | 146/851 [00:10<00:41, 16.88it/s]Loading weights:  18%|#7        | 149/851 [00:10<01:07, 10.34it/s]Loading weights:  18%|#7        | 152/851 [00:11<01:05, 10.66it/s]Loading weights:  18%|#8        | 154/851 [00:11<01:24,  8.26it/s]Loading weights:  19%|#8        | 158/851 [00:12<01:12,  9.56it/s]Loading weights:  20%|#9        | 167/851 [00:12<00:44, 15.26it/s]Loading weights:  20%|##        | 172/851 [00:12<00:55, 12.31it/s]Loading weights:  20%|##        | 174/851 [00:13<00:59, 11.43it/s]Loading weights:  21%|##1       | 182/851 [00:13<00:41, 16.19it/s]Loading weights:  22%|##1       | 186/851 [00:13<00:54, 12.16it/s]Loading weights:  22%|##2       | 188/851 [00:14<00:58, 11.38it/s]Loading weights:  23%|##2       | 194/851 [00:14<00:42, 15.58it/s]Loading weights:  23%|##3       | 199/851 [00:14<00:35, 18.28it/s]Loading weights:  24%|##3       | 202/851 [00:15<01:02, 10.39it/s]Loading weights:  24%|##4       | 205/851 [00:15<01:00, 10.69it/s]Loading weights:  24%|##4       | 207/851 [00:16<01:18,  8.21it/s]Loading weights:  25%|##4       | 211/851 [00:16<00:57, 11.23it/s]Loading weights:  25%|##5       | 214/851 [00:16<00:52, 12.21it/s]Loading weights:  26%|##5       | 221/851 [00:16<00:34, 18.51it/s]Loading weights:  26%|##6       | 224/851 [00:16<00:34, 18.17it/s]Loading weights:  27%|##6       | 227/851 [00:17<01:05,  9.50it/s]Loading weights:  28%|##7       | 235/851 [00:17<00:40, 15.38it/s]Loading weights:  28%|##7       | 238/851 [00:17<00:39, 15.55it/s]Loading weights:  28%|##8       | 241/851 [00:18<01:03,  9.62it/s]Loading weights:  29%|##9       | 247/851 [00:18<00:44, 13.64it/s]Loading weights:  29%|##9       | 250/851 [00:18<00:38, 15.48it/s]Loading weights:  30%|##9       | 253/851 [00:19<00:46, 12.86it/s]Loading weights:  30%|###       | 256/851 [00:19<01:00,  9.83it/s]Loading weights:  30%|###       | 258/851 [00:19<01:04,  9.25it/s]Loading weights:  31%|###       | 260/851 [00:20<01:20,  7.35it/s]Loading weights:  31%|###1      | 264/851 [00:20<00:54, 10.68it/s]Loading weights:  31%|###1      | 266/851 [00:20<00:55, 10.49it/s]Loading weights:  32%|###1      | 272/851 [00:20<00:40, 14.27it/s]Loading weights:  33%|###2      | 278/851 [00:21<00:37, 15.31it/s]Loading weights:  33%|###2      | 280/851 [00:21<00:55, 10.37it/s]Loading weights:  34%|###3      | 287/851 [00:22<00:39, 14.28it/s]Loading weights:  34%|###4      | 292/851 [00:22<00:39, 14.32it/s]Loading weights:  35%|###4      | 294/851 [00:22<00:55, 10.06it/s]Loading weights:  35%|###5      | 302/851 [00:23<00:36, 15.01it/s]Loading weights:  36%|###5      | 305/851 [00:23<00:32, 16.65it/s]Loading weights:  36%|###6      | 308/851 [00:24<01:16,  7.14it/s]Loading weights:  37%|###6      | 313/851 [00:24<00:57,  9.29it/s]Loading weights:  37%|###7      | 317/851 [00:25<00:51, 10.40it/s]Loading weights:  38%|###8      | 327/851 [00:25<00:33, 15.59it/s]Loading weights:  39%|###8      | 331/851 [00:25<00:32, 15.81it/s]Loading weights:  39%|###9      | 333/851 [00:26<00:44, 11.60it/s]Loading weights:  40%|###9      | 340/851 [00:26<00:33, 15.47it/s]Loading weights:  41%|####      | 345/851 [00:26<00:32, 15.47it/s]Loading weights:  41%|####      | 347/851 [00:27<00:44, 11.22it/s]Loading weights:  42%|####1     | 354/851 [00:27<00:32, 15.24it/s]Loading weights:  42%|####2     | 359/851 [00:27<00:32, 15.13it/s]Loading weights:  42%|####2     | 361/851 [00:28<00:44, 10.91it/s]Loading weights:  43%|####2     | 364/851 [00:28<00:43, 11.26it/s]Loading weights:  43%|####3     | 366/851 [00:28<00:56,  8.65it/s]Loading weights:  43%|####3     | 370/851 [00:28<00:40, 11.82it/s]Loading weights:  44%|####3     | 372/851 [00:29<00:40, 11.84it/s]Loading weights:  44%|####4     | 377/851 [00:29<00:30, 15.79it/s]Loading weights:  45%|####5     | 383/851 [00:29<00:22, 20.55it/s]Loading weights:  45%|####5     | 386/851 [00:30<00:43, 10.80it/s]Loading weights:  46%|####6     | 394/851 [00:30<00:26, 17.20it/s]Loading weights:  47%|####6     | 397/851 [00:30<00:26, 17.12it/s]Loading weights:  47%|####7     | 400/851 [00:31<00:43, 10.31it/s]Loading weights:  48%|####7     | 408/851 [00:31<00:27, 16.39it/s]Loading weights:  48%|####8     | 411/851 [00:31<00:26, 16.38it/s]Loading weights:  49%|####8     | 414/851 [00:32<00:43,  9.94it/s]Loading weights: 100%|##########| 851/851 [00:32<00:00, 26.36it/s]
+Some parameters are on the meta device because they were offloaded to the cpu.
+ref logits (444, 248320) saved
+== forwarding CAND ==
+Applying quantization config:   0%|          | 0/401 [00:00<?, ?it/s]Applying quantization config: 100%|##########| 401/401 [00:00<00:00, 14881.31it/s]
+Compressing model:   0%|          | 0/401 [00:00<?, ?it/s]Compressing model:  11%|#         | 44/401 [00:00<00:00, 438.09it/s]Compressing model:  26%|##5       | 104/401 [00:00<00:00, 529.01it/s]Compressing model:  40%|####      | 161/401 [00:00<00:00, 545.81it/s]Compressing model:  55%|#####4    | 220/401 [00:00<00:00, 560.21it/s]Compressing model:  70%|######9   | 279/401 [00:00<00:00, 568.17it/s]Compressing model:  84%|########3 | 336/401 [00:00<00:00, 567.39it/s]Compressing model: 100%|##########| 401/401 [00:00<00:00, 606.43it/s]
+Loading weights:   0%|          | 0/1588 [00:00<?, ?it/s]Loading weights:   0%|          | 1/1588 [00:01<39:16,  1.49s/it]Loading weights:   0%|          | 3/1588 [00:04<42:46,  1.62s/it]Loading weights:   1%|          | 12/1588 [00:04<07:39,  3.43it/s]Loading weights:   1%|1         | 19/1588 [00:05<04:09,  6.28it/s]Loading weights:   2%|1         | 26/1588 [00:05<02:40,  9.73it/s]Loading weights:   2%|2         | 38/1588 [00:05<01:28, 17.52it/s]Loading weights:   3%|2         | 45/1588 [00:05<01:09, 22.17it/s]Loading weights:   3%|3         | 52/1588 [00:05<00:57, 26.54it/s]Loading weights:   4%|4         | 64/1588 [00:05<00:40, 37.89it/s]Loading weights:   4%|4         | 71/1588 [00:05<00:36, 41.86it/s]Loading weights:   5%|4         | 78/1588 [00:05<00:34, 44.00it/s]Loading weights:   6%|5         | 89/1588 [00:06<00:28, 53.41it/s]Loading weights:   6%|6         | 99/1588 [00:06<00:25, 59.02it/s]Loading weights:   7%|6         | 107/1588 [00:06<00:23, 63.38it/s]Loading weights:   7%|7         | 115/1588 [00:06<00:22, 64.09it/s]Loading weights:   8%|7         | 123/1588 [00:06<00:25, 57.30it/s]Loading weights:   9%|8         | 138/1588 [00:06<00:21, 68.75it/s]Loading weights:   9%|9         | 146/1588 [00:06<00:20, 70.65it/s]Loading weights:  10%|9         | 154/1588 [00:07<00:24, 57.93it/s]Loading weights:  10%|#         | 166/1588 [00:07<00:21, 66.62it/s]Loading weights:  11%|#         | 174/1588 [00:07<00:21, 66.00it/s]Loading weights:  11%|#1        | 181/1588 [00:07<00:22, 62.39it/s]Loading weights:  12%|#2        | 191/1588 [00:07<00:22, 63.29it/s]Loading weights:  12%|#2        | 198/1588 [00:07<00:22, 61.77it/s]Loading weights:  13%|#2        | 206/1588 [00:07<00:21, 65.52it/s]Loading weights:  14%|#3        | 216/1588 [00:07<00:19, 70.22it/s]Loading weights:  14%|#4        | 224/1588 [00:08<00:20, 66.55it/s]Loading weights:  15%|#4        | 231/1588 [00:08<00:21, 63.01it/s]Loading weights:  15%|#5        | 242/1588 [00:08<00:19, 68.84it/s]Loading weights:  16%|#5        | 249/1588 [00:08<00:19, 67.94it/s]Loading weights:  16%|#6        | 256/1588 [00:08<00:21, 62.74it/s]Loading weights:  17%|#6        | 268/1588 [00:08<00:18, 69.81it/s]Loading weights:  17%|#7        | 275/1588 [00:08<00:22, 57.77it/s]Loading weights:  18%|#8        | 287/1588 [00:09<00:19, 67.66it/s]Loading weights:  19%|#8        | 297/1588 [00:09<00:18, 69.12it/s]Loading weights:  19%|#9        | 306/1588 [00:09<00:20, 62.39it/s]Loading weights:  20%|##        | 318/1588 [00:09<00:18, 69.27it/s]Loading weights:  21%|##        | 326/1588 [00:09<00:17, 70.43it/s]Loading weights:  21%|##1       | 334/1588 [00:09<00:18, 66.11it/s]Loading weights:  22%|##1       | 344/1588 [00:09<00:17, 69.43it/s]Loading weights:  22%|##2       | 352/1588 [00:10<00:17, 69.30it/s]Loading weights:  23%|##2       | 360/1588 [00:10<00:18, 66.43it/s]Loading weights:  23%|##3       | 370/1588 [00:10<00:17, 70.43it/s]Loading weights:  24%|##3       | 378/1588 [00:10<00:17, 68.44it/s]Loading weights:  24%|##4       | 385/1588 [00:10<00:19, 62.93it/s]Loading weights:  25%|##4       | 395/1588 [00:10<00:18, 63.72it/s]Loading weights:  25%|##5       | 402/1588 [00:10<00:19, 59.95it/s]Loading weights:  26%|##6       | 415/1588 [00:10<00:15, 76.49it/s]Loading weights:  27%|##6       | 424/1588 [00:11<00:16, 68.89it/s]Loading weights:  27%|##7       | 432/1588 [00:11<00:18, 63.67it/s]Loading weights:  28%|##7       | 444/1588 [00:11<00:16, 67.77it/s]Loading weights:  29%|##8       | 453/1588 [00:11<00:17, 63.18it/s]Loading weights:  29%|##8       | 460/1588 [00:11<00:18, 61.01it/s]Loading weights:  30%|##9       | 472/1588 [00:11<00:16, 69.11it/s]Loading weights:  30%|###       | 480/1588 [00:12<00:18, 61.21it/s]Loading weights:  31%|###1      | 493/1588 [00:12<00:18, 59.92it/s]Loading weights:  32%|###1      | 507/1588 [00:12<00:15, 71.18it/s]Loading weights:  33%|###2      | 520/1588 [00:12<00:14, 72.56it/s]Loading weights:  33%|###3      | 528/1588 [00:12<00:16, 65.22it/s]Loading weights:  34%|###3      | 536/1588 [00:12<00:16, 62.57it/s]Loading weights:  35%|###4      | 548/1588 [00:12<00:14, 70.76it/s]Loading weights:  35%|###5      | 556/1588 [00:13<00:14, 69.84it/s]Loading weights:  36%|###5      | 564/1588 [00:13<00:15, 66.87it/s]Loading weights:  36%|###6      | 574/1588 [00:13<00:14, 69.89it/s]Loading weights:  37%|###6      | 582/1588 [00:13<00:16, 60.22it/s]Loading weights:  37%|###7      | 594/1588 [00:13<00:14, 69.26it/s]Loading weights:  38%|###7      | 603/1588 [00:13<00:14, 65.89it/s]Loading weights:  39%|###8      | 612/1588 [00:13<00:15, 63.09it/s]Loading weights:  39%|###9      | 624/1588 [00:14<00:13, 71.29it/s]Loading weights:  40%|###9      | 632/1588 [00:14<00:13, 69.42it/s]Loading weights:  40%|####      | 640/1588 [00:14<00:14, 65.57it/s]Loading weights:  41%|####      | 650/1588 [00:14<00:13, 69.80it/s]Loading weights:  41%|####1     | 658/1588 [00:14<00:13, 70.46it/s]Loading weights:  42%|####1     | 666/1588 [00:14<00:13, 66.30it/s]Loading weights:  43%|####2     | 676/1588 [00:14<00:12, 70.45it/s]Loading weights:  43%|####3     | 684/1588 [00:14<00:13, 69.29it/s]Loading weights:  44%|####3     | 691/1588 [00:15<00:13, 64.67it/s]Loading weights:  44%|####4     | 700/1588 [00:15<00:13, 63.75it/s]Loading weights:  45%|####4     | 711/1588 [00:15<00:12, 70.02it/s]Loading weights:  45%|####5     | 719/1588 [00:15<00:12, 71.58it/s]Loading weights:  46%|####5     | 727/1588 [00:15<00:12, 69.11it/s]Loading weights:  46%|####6     | 734/1588 [00:15<00:13, 64.89it/s]Loading weights:  47%|####6     | 741/1588 [00:15<00:14, 59.36it/s]Loading weights:  47%|####7     | 748/1588 [00:16<00:16, 52.17it/s]Loading weights:  48%|####7     | 762/1588 [00:16<00:14, 56.59it/s]Loading weights:  49%|####8     | 778/1588 [00:16<00:11, 72.22it/s]Loading weights:  49%|####9     | 786/1588 [00:16<00:11, 70.32it/s]Loading weights:  50%|#####     | 794/1588 [00:16<00:12, 64.92it/s]Loading weights:  51%|#####     | 803/1588 [00:16<00:12, 64.98it/s]Loading weights:  51%|#####1    | 812/1588 [00:17<00:13, 57.27it/s]Loading weights:  52%|#####2    | 828/1588 [00:17<00:10, 73.90it/s]Loading weights:  53%|#####2    | 836/1588 [00:17<00:10, 72.80it/s]Loading weights:  53%|#####3    | 844/1588 [00:17<00:10, 68.59it/s]Loading weights:  54%|#####3    | 854/1588 [00:17<00:10, 72.48it/s]Loading weights:  54%|#####4    | 862/1588 [00:17<00:10, 72.41it/s]Loading weights:  55%|#####4    | 870/1588 [00:17<00:10, 65.45it/s]Loading weights:  55%|#####5    | 880/1588 [00:17<00:10, 68.15it/s]Loading weights:  56%|#####5    | 887/1588 [00:18<00:10, 66.94it/s]Loading weights:  56%|#####6    | 894/1588 [00:18<00:10, 63.15it/s]Loading weights:  57%|#####6    | 901/1588 [00:18<00:11, 59.44it/s]Loading weights:  58%|#####7    | 914/1588 [00:18<00:09, 71.29it/s]Loading weights:  58%|#####8    | 926/1588 [00:18<00:07, 82.93it/s]Loading weights:  59%|#####8    | 935/1588 [00:18<00:08, 74.04it/s]Loading weights:  59%|#####9    | 943/1588 [00:18<00:09, 69.28it/s]Loading weights:  60%|#####9    | 951/1588 [00:19<00:10, 61.51it/s]Loading weights:  61%|######    | 963/1588 [00:19<00:09, 67.42it/s]Loading weights:  61%|######1   | 971/1588 [00:19<00:09, 65.11it/s]Loading weights:  62%|######1   | 982/1588 [00:19<00:08, 70.49it/s]Loading weights:  62%|######2   | 990/1588 [00:19<00:08, 70.77it/s]Loading weights:  63%|######2   | 998/1588 [00:19<00:08, 67.66it/s]Loading weights:  63%|######3   | 1006/1588 [00:19<00:08, 66.13it/s]Loading weights:  64%|######4   | 1017/1588 [00:19<00:07, 71.77it/s]Loading weights:  65%|######4   | 1030/1588 [00:20<00:07, 72.35it/s]Loading weights:  65%|######5   | 1038/1588 [00:20<00:08, 64.90it/s]Loading weights:  66%|######5   | 1046/1588 [00:20<00:08, 61.29it/s]Loading weights:  67%|######6   | 1058/1588 [00:20<00:07, 70.30it/s]Loading weights:  67%|######7   | 1066/1588 [00:20<00:07, 69.21it/s]Loading weights:  68%|######7   | 1074/1588 [00:20<00:08, 62.81it/s]Loading weights:  68%|######8   | 1084/1588 [00:20<00:07, 67.33it/s]Loading weights:  69%|######8   | 1091/1588 [00:21<00:07, 67.38it/s]Loading weights:  69%|######9   | 1098/1588 [00:21<00:07, 62.57it/s]Loading weights:  70%|######9   | 1109/1588 [00:21<00:07, 66.67it/s]Loading weights:  70%|#######   | 1119/1588 [00:21<00:06, 69.16it/s]Loading weights:  71%|#######1  | 1131/1588 [00:21<00:05, 81.34it/s]Loading weights:  72%|#######1  | 1140/1588 [00:21<00:07, 62.12it/s]Loading weights:  72%|#######2  | 1148/1588 [00:21<00:07, 62.00it/s]Loading weights:  73%|#######3  | 1160/1588 [00:22<00:05, 71.47it/s]Loading weights:  74%|#######3  | 1168/1588 [00:22<00:05, 71.37it/s]Loading weights:  74%|#######4  | 1176/1588 [00:22<00:06, 66.21it/s]Loading weights:  75%|#######4  | 1186/1588 [00:22<00:05, 70.83it/s]Loading weights:  75%|#######5  | 1194/1588 [00:22<00:05, 70.06it/s]Loading weights:  76%|#######5  | 1202/1588 [00:22<00:05, 65.64it/s]Loading weights:  76%|#######6  | 1211/1588 [00:22<00:05, 66.96it/s]Loading weights:  77%|#######6  | 1221/1588 [00:22<00:05, 67.89it/s]Loading weights:  77%|#######7  | 1228/1588 [00:23<00:05, 68.24it/s]Loading weights:  78%|#######7  | 1236/1588 [00:23<00:05, 67.98it/s]Loading weights:  78%|#######8  | 1243/1588 [00:23<00:05, 66.90it/s]Loading weights:  79%|#######8  | 1250/1588 [00:23<00:05, 61.02it/s]Loading weights:  79%|#######9  | 1262/1588 [00:23<00:04, 72.94it/s]Loading weights:  80%|#######9  | 1270/1588 [00:23<00:04, 72.35it/s]Loading weights:  80%|########  | 1278/1588 [00:23<00:04, 67.57it/s]Loading weights:  81%|########1 | 1288/1588 [00:23<00:04, 71.18it/s]Loading weights:  82%|########1 | 1296/1588 [00:24<00:04, 60.30it/s]Loading weights:  82%|########2 | 1309/1588 [00:24<00:03, 72.63it/s]Loading weights:  83%|########2 | 1317/1588 [00:24<00:03, 69.51it/s]Loading weights:  83%|########3 | 1325/1588 [00:24<00:04, 64.86it/s]Loading weights:  84%|########4 | 1338/1588 [00:24<00:03, 76.34it/s]Loading weights:  85%|########4 | 1346/1588 [00:24<00:03, 75.97it/s]Loading weights:  85%|########5 | 1354/1588 [00:24<00:03, 71.16it/s]Loading weights:  86%|########5 | 1364/1588 [00:24<00:02, 76.78it/s]Loading weights:  86%|########6 | 1372/1588 [00:25<00:02, 76.00it/s]Loading weights:  87%|########6 | 1380/1588 [00:25<00:02, 70.35it/s]Loading weights:  88%|########7 | 1390/1588 [00:25<00:02, 74.66it/s]Loading weights:  88%|########8 | 1398/1588 [00:25<00:02, 72.26it/s]Loading weights:  89%|########8 | 1406/1588 [00:25<00:02, 67.49it/s]Loading weights:  89%|########9 | 1415/1588 [00:25<00:02, 67.30it/s]Loading weights:  90%|########9 | 1425/1588 [00:25<00:02, 69.88it/s]Loading weights:  90%|######### | 1433/1588 [00:25<00:02, 72.39it/s]Loading weights:  91%|######### | 1441/1588 [00:26<00:02, 69.68it/s]Loading weights:  91%|#########1| 1449/1588 [00:26<00:03, 39.54it/s]Loading weights:  92%|#########1| 1460/1588 [00:26<00:02, 49.16it/s]Loading weights:  92%|#########2| 1467/1588 [00:26<00:03, 38.49it/s]Loading weights:  93%|#########2| 1473/1588 [00:27<00:02, 40.34it/s]Loading weights:  93%|#########3| 1480/1588 [00:27<00:02, 43.38it/s]Loading weights:  94%|#########3| 1486/1588 [00:27<00:02, 40.35it/s]Loading weights:  94%|#########3| 1491/1588 [00:27<00:02, 32.46it/s]Loading weights:  94%|#########4| 1495/1588 [00:28<00:04, 22.18it/s]Loading weights:  95%|#########4| 1505/1588 [00:28<00:02, 31.25it/s]Loading weights:  96%|#########5| 1518/1588 [00:28<00:01, 44.42it/s]Loading weights:  96%|#########5| 1524/1588 [00:28<00:01, 41.33it/s]Loading weights:  96%|#########6| 1530/1588 [00:28<00:01, 35.03it/s]Loading weights:  97%|#########6| 1538/1588 [00:28<00:01, 40.76it/s]Loading weights:  97%|#########7| 1543/1588 [00:29<00:01, 37.46it/s]Loading weights:  97%|#########7| 1548/1588 [00:29<00:01, 30.76it/s]Loading weights:  98%|#########8| 1558/1588 [00:29<00:00, 41.16it/s]Loading weights:  98%|#########8| 1563/1588 [00:29<00:00, 37.48it/s]Loading weights:  99%|#########8| 1568/1588 [00:29<00:00, 30.50it/s]Loading weights:  99%|#########8| 1572/1588 [00:29<00:00, 30.69it/s]Loading weights:  99%|#########9| 1576/1588 [00:30<00:00, 25.40it/s]Loading weights: 100%|#########9| 1584/1588 [00:30<00:00, 32.43it/s]Loading weights: 100%|##########| 1588/1588 [00:30<00:00, 52.25it/s]
+Traceback (most recent call last):
+  File "C:\Users\ilaya\AppData\Local\Temp\claude\A--ninfer-spark\79ffab74-e953-4647-8f64-a06ac226f6f9\scratchpad\kld_measure.py", line 44, in <module>
+    cand = logits_for(cand_dir)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ilaya\AppData\Local\Temp\claude\A--ninfer-spark\79ffab74-e953-4647-8f64-a06ac226f6f9\scratchpad\kld_measure.py", line 31, in logits_for
+    out = m.forward(input_ids=ids.to(m.device if hasattr(m, "device") else "cuda"))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\utils\generic.py", line 911, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\models\qwen3_5\modeling_qwen3_5.py", line 1654, in forward
+    outputs: BaseModelOutputWithPast = self.model(
+                                       ^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\utils\generic.py", line 1040, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\utils\output_capturing.py", line 262, in wrapper
+    outputs = func(self, *args, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\models\qwen3_5\modeling_qwen3_5.py", line 1212, in forward
+    hidden_states = decoder_layer(
+                    ^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\modeling_layers.py", line 110, in __call__
+    return super().__call__(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\models\qwen3_5\modeling_qwen3_5.py", line 788, in forward
+    hidden_states = self.linear_attn(
+                    ^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\integrations\accelerate.py", line 941, in wrapped
+    output = forward_func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\models\qwen3_5\modeling_qwen3_5.py", line 464, in forward
+    mixed_qkv = self.in_proj_qkv(hidden_states)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\compressed_tensors\quantization\lifecycle\forward.py", line 282, in quantized_forward
+    output = self.__class__.forward(self, input)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\linear.py", line 134, in forward
+    return F.linear(input, self.weight, self.bias)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: expected mat1 and mat2 to have the same dtype, but got: struct c10::BFloat16 != struct c10::Float8_e4m3fn
+KLD gptq FAILED
+=== KLD: BF16 || stock-unsloth-NVFP4 (RTN reference) ===
+[thermal] gate: 41C, need <=58C
+[thermal] open (41C)
+held-out tokens: 444
+== forwarding REF (BF16) ==
+W0916 09:28:05.989000 20560 Lib\site-packages\torch\distributed\elastic\multiprocessing\redirects.py:29] NOTE: Redirects are currently not supported in Windows or MacOs.
+[transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Loading weights:   0%|          | 0/851 [00:00<?, ?it/s]Loading weights:   0%|          | 2/851 [00:00<05:31,  2.56it/s]Loading weights:   2%|1         | 13/851 [00:00<00:45, 18.59it/s]Loading weights:   2%|2         | 19/851 [00:01<00:32, 25.48it/s]Loading weights:   3%|2         | 25/851 [00:01<00:25, 32.33it/s]Loading weights:   4%|3         | 31/851 [00:01<00:22, 36.59it/s]Loading weights:   5%|4         | 41/851 [00:01<00:16, 49.10it/s]Loading weights:   6%|5         | 48/851 [00:01<00:20, 40.12it/s]Loading weights:   7%|6         | 59/851 [00:01<00:15, 51.49it/s]Loading weights:   8%|7         | 68/851 [00:01<00:14, 55.02it/s]Loading weights:   9%|9         | 80/851 [00:01<00:11, 66.48it/s]Loading weights:  10%|#         | 88/851 [00:02<00:12, 60.91it/s]Loading weights:  11%|#1        | 95/851 [00:02<00:12, 59.63it/s]Loading weights:  12%|#1        | 102/851 [00:02<00:15, 48.47it/s]Loading weights:  13%|#3        | 113/851 [00:02<00:12, 59.48it/s]Loading weights:  14%|#4        | 120/851 [00:02<00:12, 56.62it/s]Loading weights:  15%|#5        | 130/851 [00:02<00:10, 65.91it/s]Loading weights:  16%|#6        | 138/851 [00:03<00:12, 58.76it/s]Loading weights:  17%|#7        | 145/851 [00:03<00:12, 58.12it/s]Loading weights:  18%|#7        | 152/851 [00:03<00:12, 55.42it/s]Loading weights:  19%|#8        | 158/851 [00:03<00:12, 54.84it/s]Loading weights:  20%|##        | 172/851 [00:03<00:09, 68.33it/s]Loading weights:  21%|##1       | 179/851 [00:03<00:10, 64.94it/s]Loading weights:  22%|##1       | 186/851 [00:03<00:10, 66.05it/s]Loading weights:  23%|##2       | 195/851 [00:03<00:09, 70.40it/s]Loading weights:  24%|##3       | 203/851 [00:04<00:10, 59.76it/s]Loading weights:  25%|##4       | 210/851 [00:04<00:11, 56.59it/s]Loading weights:  26%|##6       | 222/851 [00:04<00:09, 68.43it/s]Loading weights:  27%|##7       | 230/851 [00:04<00:10, 61.68it/s]Loading weights:  28%|##8       | 239/851 [00:04<00:11, 51.36it/s]Loading weights:  30%|##9       | 253/851 [00:04<00:09, 66.09it/s]Loading weights:  31%|###       | 261/851 [00:05<00:11, 50.96it/s]Loading weights:  32%|###1      | 272/851 [00:05<00:09, 58.62it/s]Loading weights:  33%|###2      | 279/851 [00:05<00:09, 59.95it/s]Loading weights:  34%|###3      | 289/851 [00:05<00:08, 68.01it/s]Loading weights:  35%|###4      | 297/851 [00:05<00:09, 60.25it/s]Loading weights:  36%|###5      | 306/851 [00:05<00:08, 61.49it/s]Loading weights:  37%|###6      | 313/851 [00:06<00:10, 48.96it/s]Loading weights:  39%|###8      | 330/851 [00:06<00:07, 71.47it/s]Loading weights:  40%|###9      | 339/851 [00:06<00:07, 69.17it/s]Loading weights:  41%|####      | 347/851 [00:06<00:09, 55.01it/s]Loading weights:  42%|####2     | 359/851 [00:06<00:07, 64.41it/s]Loading weights:  43%|####3     | 367/851 [00:06<00:09, 48.47it/s]Loading weights:  45%|####4     | 380/851 [00:07<00:07, 61.08it/s]Loading weights:  46%|####5     | 388/851 [00:07<00:08, 55.89it/s]Loading weights:  47%|####6     | 398/851 [00:07<00:08, 52.76it/s]Loading weights:  48%|####7     | 405/851 [00:07<00:08, 54.26it/s]Loading weights:  48%|####8     | 412/851 [00:07<00:08, 54.81it/s]Loading weights:  49%|####9     | 418/851 [00:07<00:08, 50.75it/s]Loading weights: 100%|##########| 851/851 [00:07<00:00, 108.78it/s]
+Some parameters are on the meta device because they were offloaded to the cpu.
+ref logits (444, 248320) saved
+== forwarding CAND ==
+Applying quantization config:   0%|          | 0/401 [00:00<?, ?it/s]Applying quantization config: 100%|##########| 401/401 [00:00<00:00, 17295.30it/s]
+Compressing model:   0%|          | 0/417 [00:00<?, ?it/s]Compressing model:  15%|#4        | 62/417 [00:00<00:00, 603.89it/s]Compressing model:  29%|##9       | 123/417 [00:00<00:00, 602.04it/s]Compressing model:  45%|####4     | 186/417 [00:00<00:00, 609.98it/s]Compressing model:  59%|#####9    | 247/417 [00:00<00:00, 603.62it/s]Compressing model:  74%|#######4  | 310/417 [00:00<00:00, 610.37it/s]Compressing model:  92%|#########1| 382/417 [00:00<00:00, 643.93it/s]Compressing model: 100%|##########| 417/417 [00:00<00:00, 661.69it/s]
+Loading weights:   0%|          | 0/1052 [00:00<?, ?it/s]Loading weights:   0%|          | 1/1052 [00:01<28:43,  1.64s/it]Loading weights:   0%|          | 3/1052 [00:05<29:11,  1.67s/it]Loading weights:   1%|1         | 11/1052 [00:05<05:45,  3.01it/s]Loading weights:   3%|2         | 27/1052 [00:05<01:50,  9.24it/s]Loading weights:   4%|4         | 44/1052 [00:05<00:56, 17.70it/s]Loading weights:   6%|6         | 64/1052 [00:05<00:32, 30.47it/s]Loading weights:   7%|7         | 76/1052 [00:05<00:28, 34.53it/s]Loading weights:   9%|8         | 94/1052 [00:05<00:20, 46.09it/s]Loading weights:  10%|#         | 109/1052 [00:06<00:16, 58.68it/s]Loading weights:  12%|#1        | 121/1052 [00:06<00:15, 60.67it/s]Loading weights:  13%|#2        | 135/1052 [00:06<00:13, 67.70it/s]Loading weights:  14%|#3        | 145/1052 [00:06<00:13, 68.95it/s]Loading weights:  15%|#5        | 161/1052 [00:06<00:10, 82.40it/s]Loading weights:  17%|#6        | 175/1052 [00:06<00:09, 94.01it/s]Loading weights:  18%|#7        | 187/1052 [00:06<00:09, 87.43it/s]Loading weights:  19%|#9        | 202/1052 [00:07<00:09, 91.62it/s]Loading weights:  20%|##        | 213/1052 [00:07<00:09, 87.75it/s]Loading weights:  22%|##1       | 227/1052 [00:07<00:08, 92.60it/s]Loading weights:  23%|##2       | 241/1052 [00:07<00:09, 87.30it/s]Loading weights:  25%|##5       | 264/1052 [00:07<00:07, 105.22it/s]Loading weights:  26%|##6       | 278/1052 [00:07<00:07, 98.19it/s] Loading weights:  28%|##7       | 294/1052 [00:08<00:08, 87.88it/s]Loading weights:  30%|##9       | 311/1052 [00:08<00:07, 98.05it/s]Loading weights:  31%|###       | 326/1052 [00:08<00:07, 98.22it/s]Loading weights:  32%|###2      | 337/1052 [00:08<00:07, 99.02it/s]Loading weights:  33%|###3      | 348/1052 [00:08<00:08, 87.40it/s]Loading weights:  34%|###4      | 361/1052 [00:08<00:07, 90.69it/s]Loading weights:  36%|###5      | 376/1052 [00:08<00:06, 98.13it/s]Loading weights:  38%|###7      | 399/1052 [00:09<00:05, 124.33it/s]Loading weights:  39%|###9      | 413/1052 [00:09<00:07, 89.95it/s] Loading weights:  41%|####      | 428/1052 [00:09<00:06, 96.68it/s]Loading weights:  42%|####2     | 446/1052 [00:09<00:06, 90.04it/s]Loading weights:  44%|####4     | 463/1052 [00:09<00:05, 104.88it/s]Loading weights:  45%|####5     | 477/1052 [00:09<00:05, 112.21it/s]Loading weights:  47%|####6     | 490/1052 [00:09<00:05, 102.11it/s]Loading weights:  48%|####7     | 502/1052 [00:10<00:05, 92.56it/s] Loading weights:  49%|####8     | 514/1052 [00:10<00:05, 93.16it/s]Loading weights:  51%|#####     | 535/1052 [00:10<00:05, 98.66it/s]Loading weights:  52%|#####1    | 547/1052 [00:10<00:05, 96.61it/s]Loading weights:  54%|#####3    | 563/1052 [00:10<00:04, 105.89it/s]Loading weights:  55%|#####5    | 580/1052 [00:10<00:04, 105.07it/s]Loading weights:  57%|#####6    | 596/1052 [00:11<00:04, 91.70it/s] Loading weights:  58%|#####8    | 612/1052 [00:11<00:04, 97.64it/s]Loading weights:  59%|#####9    | 625/1052 [00:11<00:04, 99.86it/s]Loading weights:  62%|######1   | 647/1052 [00:11<00:03, 102.92it/s]Loading weights:  63%|######3   | 667/1052 [00:11<00:03, 122.02it/s]Loading weights:  65%|######4   | 681/1052 [00:11<00:03, 99.65it/s] Loading weights:  66%|######6   | 697/1052 [00:12<00:03, 107.51it/s]Loading weights:  68%|######7   | 713/1052 [00:12<00:03, 102.77it/s]Loading weights:  69%|######8   | 725/1052 [00:12<00:03, 106.35it/s]Loading weights:  70%|#######   | 737/1052 [00:12<00:03, 99.62it/s] Loading weights:  71%|#######1  | 748/1052 [00:12<00:03, 95.44it/s]Loading weights:  73%|#######2  | 764/1052 [00:12<00:02, 103.82it/s]Loading weights:  74%|#######4  | 781/1052 [00:12<00:02, 101.56it/s]Loading weights:  76%|#######6  | 801/1052 [00:12<00:02, 119.62it/s]Loading weights:  77%|#######7  | 814/1052 [00:13<00:02, 95.55it/s] Loading weights:  78%|#######8  | 825/1052 [00:13<00:02, 98.45it/s]Loading weights:  79%|#######9  | 836/1052 [00:13<00:02, 86.21it/s]Loading weights:  81%|########  | 849/1052 [00:13<00:02, 90.06it/s]Loading weights:  83%|########2 | 870/1052 [00:13<00:01, 114.02it/s]Loading weights:  84%|########3 | 883/1052 [00:13<00:01, 91.99it/s] Loading weights:  85%|########5 | 895/1052 [00:14<00:01, 92.81it/s]Loading weights:  87%|########6 | 911/1052 [00:14<00:01, 91.59it/s]Loading weights:  89%|########8 | 935/1052 [00:14<00:00, 122.14it/s]Loading weights:  90%|######### | 949/1052 [00:14<00:01, 90.13it/s] Loading weights:  91%|#########1| 961/1052 [00:15<00:01, 55.19it/s]Loading weights:  92%|#########2| 970/1052 [00:15<00:02, 40.51it/s]Loading weights:  93%|#########2| 977/1052 [00:15<00:01, 42.67it/s]Loading weights:  94%|#########3| 984/1052 [00:16<00:02, 32.17it/s]Loading weights:  94%|#########4| 989/1052 [00:16<00:02, 26.06it/s]Loading weights:  94%|#########4| 993/1052 [00:16<00:02, 26.25it/s]Loading weights:  95%|#########5| 1004/1052 [00:16<00:01, 35.90it/s]Loading weights:  96%|#########5| 1009/1052 [00:17<00:01, 25.38it/s]Loading weights:  97%|#########6| 1018/1052 [00:17<00:01, 32.29it/s]Loading weights:  97%|#########7| 1023/1052 [00:17<00:01, 23.76it/s]Loading weights:  98%|#########8| 1032/1052 [00:17<00:00, 31.05it/s]Loading weights:  99%|#########8| 1037/1052 [00:18<00:00, 21.40it/s]Loading weights:  99%|#########8| 1041/1052 [00:18<00:00, 19.87it/s]Loading weights:  99%|#########9| 1044/1052 [00:18<00:00, 20.62it/s]Loading weights: 100%|#########9| 1049/1052 [00:18<00:00, 23.16it/s]Loading weights: 100%|##########| 1052/1052 [00:18<00:00, 55.71it/s]
+[transformers] [1mQwen3_5ForCausalLM LOAD REPORT[0m from: A:/models/Qwen3.8-27B/NVFP4_unsloth
+Key                                                        | Status     | 
+-----------------------------------------------------------+------------+-
+model.layers.{0...63}.mlp.down_projweight                  | UNEXPECTED | 
+model.layers.{0...62}.linear_attn.in_proj_zweight          | UNEXPECTED | 
+model.layers.{3...63}.self_attn.o_projweight               | UNEXPECTED | 
+model.layers.{3...63}.self_attn.q_projweight               | UNEXPECTED | 
+model.layers.{0...63}.mlp.up_projweight                    | UNEXPECTED | 
+model.layers.{0...63}.mlp.gate_projweight                  | UNEXPECTED | 
+model.layers.{0...62}.linear_attn.out_projweight           | UNEXPECTED | 
+model.layers.{3...63}.self_attn.v_projweight               | UNEXPECTED | 
+model.layers.{0...62}.linear_attn.in_proj_qkvweight        | UNEXPECTED | 
+model.layers.{3...63}.self_attn.k_projweight               | UNEXPECTED | 
+model.layers.{0...63}.mlp.down_proj.weight_scale           | MISSING    | 
+model.layers.{0...62}.linear_attn.in_proj_z.weight_scale   | MISSING    | 
+model.layers.{0...55}.mlp.gate_proj.weight_packed          | MISSING    | 
+model.layers.{0...55}.mlp.down_proj.weight_packed          | MISSING    | 
+model.layers.{0...62}.linear_attn.out_proj.weight_scale    | MISSING    | 
+model.layers.{0...63}.mlp.gate_proj.weight_scale           | MISSING    | 
+model.layers.{0...63}.mlp.up_proj.weight_scale             | MISSING    | 
+model.layers.{0...55}.mlp.up_proj.weight_packed            | MISSING    | 
+model.layers.{0...62}.linear_attn.in_proj_qkv.weight_scale | MISSING    | 
+model.layers.{3...63}.self_attn.v_proj.weight_scale        | MISSING    | 
+model.layers.{3...63}.self_attn.q_proj.weight_scale        | MISSING    | 
+model.layers.{3...63}.self_attn.k_proj.weight_scale        | MISSING    | 
+model.layers.{3...63}.self_attn.o_proj.weight_scale        | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Traceback (most recent call last):
+  File "C:\Users\ilaya\AppData\Local\Temp\claude\A--ninfer-spark\79ffab74-e953-4647-8f64-a06ac226f6f9\scratchpad\kld_measure.py", line 44, in <module>
+    cand = logits_for(cand_dir)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ilaya\AppData\Local\Temp\claude\A--ninfer-spark\79ffab74-e953-4647-8f64-a06ac226f6f9\scratchpad\kld_measure.py", line 31, in logits_for
+    out = m.forward(input_ids=ids.to(m.device if hasattr(m, "device") else "cuda"))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\utils\generic.py", line 911, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\models\qwen3_5\modeling_qwen3_5.py", line 1654, in forward
+    outputs: BaseModelOutputWithPast = self.model(
+                                       ^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\utils\generic.py", line 1040, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\utils\output_capturing.py", line 262, in wrapper
+    outputs = func(self, *args, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\models\qwen3_5\modeling_qwen3_5.py", line 1212, in forward
+    hidden_states = decoder_layer(
+                    ^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\modeling_layers.py", line 110, in __call__
+    return super().__call__(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\models\qwen3_5\modeling_qwen3_5.py", line 788, in forward
+    hidden_states = self.linear_attn(
+                    ^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\integrations\accelerate.py", line 941, in wrapped
+    output = forward_func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\transformers\models\qwen3_5\modeling_qwen3_5.py", line 464, in forward
+    mixed_qkv = self.in_proj_qkv(hidden_states)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1779, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\module.py", line 1790, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\compressed_tensors\quantization\lifecycle\forward.py", line 282, in quantized_forward
+    output = self.__class__.forward(self, input)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "A:\swift\.venv\Lib\site-packages\torch\nn\modules\linear.py", line 134, in forward
+    return F.linear(input, self.weight, self.bias)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: expected mat1 and mat2 to have the same dtype, but got: struct c10::BFloat16 != struct c10::Float8_e4m3fn
+KLD rtn FAILED
+=== thermal audit ===
+THERMAL max_temp=75C longest_>=70C_window=1m31s (limit 10m) -> OK
+=== SUMMARY ===
+label      mean_think  refusal  code@1  deepswe@1   tok/s reason_acc
+gptq_abl         84.2      0.0     1.0        0.8    74.5        1.0
+regular          97.7      0.0     1.0        1.0    74.8        1.0
+rtn_abl          96.8      0.0     1.0        1.0    74.8        1.0
+=== run_all done Wed Sep 16 09:28:52 JST 2026 ===

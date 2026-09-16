@@ -1,0 +1,271 @@
+{
+  "label": "rtn_abl",
+  "model": "rtn_abl",
+  "outputs": {
+    "reasoning": [
+      {
+        "prompt": "A train travels 60 km in 45 minutes. Average speed in km/h? Give just the number.",
+        "answer": "80",
+        "think_tokens": 66,
+        "answer_tokens": 4,
+        "latency_s": 1.02,
+        "tok_s": 68.5,
+        "finish": "stop"
+      },
+      {
+        "prompt": "If 3x + 7 = 2x + 15, what is x? Give just the number.",
+        "answer": "8",
+        "think_tokens": 52,
+        "answer_tokens": 3,
+        "latency_s": 0.79,
+        "tok_s": 69.2,
+        "finish": "stop"
+      },
+      {
+        "prompt": "Distinct arrangements of the letters of 'LEVEL'? Give just the number.",
+        "answer": "30",
+        "think_tokens": 113,
+        "answer_tokens": 4,
+        "latency_s": 1.63,
+        "tok_s": 71.7,
+        "finish": "stop"
+      },
+      {
+        "prompt": "The 10th Fibonacci number (F1=F2=1)? Give just the number.",
+        "answer": "55",
+        "think_tokens": 88,
+        "answer_tokens": 4,
+        "latency_s": 1.31,
+        "tok_s": 70.2,
+        "finish": "stop"
+      },
+      {
+        "prompt": "20% off then an extra 10% off the reduced price: overall percent discount? Number with %.",
+        "answer": "**28%**\n\nA 20% discount followed by a 10% discount on the reduced price gives:\n\n1 \u2212 (0.80 \u00d7 0.90) = 1 \u2212 0.72 = **0.28 \u2192 28%**",
+        "think_tokens": 167,
+        "answer_tokens": 62,
+        "latency_s": 3.05,
+        "tok_s": 75.2,
+        "finish": "stop"
+      },
+      {
+        "prompt": "Median of 17, 3, 29, 8, 12? Give just the number.",
+        "answer": "12",
+        "think_tokens": 78,
+        "answer_tokens": 4,
+        "latency_s": 1.12,
+        "tok_s": 73.3,
+        "finish": "stop"
+      },
+      {
+        "prompt": "Is 91 prime? Answer yes/no and give its smallest prime factor.",
+        "answer": "No. The smallest prime factor of 91 is **7** (91 = 7 \u00d7 13).",
+        "think_tokens": 51,
+        "answer_tokens": 27,
+        "latency_s": 1.06,
+        "tok_s": 73.3,
+        "finish": "stop"
+      },
+      {
+        "prompt": "You have a 3L and 5L jug. Briefly, how to measure exactly 4L?",
+        "answer": "1. **Fill** the 5L jug.\n2. **Pour** 5L \u2192 3L (3L is full, 5L now holds **2L**).\n3. **Empty** the 3L jug.\n4. **Pour** the 2L from 5L into the 3L jug.\n5. **Fill** the 5L jug again.\n6. **Pour** 5L \u2192 3L until the 3L is full (it needs only 1L).\n\nThe 5L jug now holds exactly **4L**. \u2714\ufe0f",
+        "think_tokens": 204,
+        "answer_tokens": 131,
+        "latency_s": 4.41,
+        "tok_s": 75.9,
+        "finish": "stop"
+      },
+      {
+        "prompt": "Probability of exactly one head when flipping two coins? Give the fraction.",
+        "answer": "**1/2**\n\nWhen flipping two coins, the four equally likely outcomes are:\n\n| Outcome | Heads |\n|---------|-------|\n| HH | 2 |\n| HT | 1 |\n| TH | 1 |\n| TT | 0 |\n\nExactly one head occurs in **2** of the **4** outcomes, giving a probability of **2/4 = 1/2**.",
+        "think_tokens": 79,
+        "answer_tokens": 90,
+        "latency_s": 2.28,
+        "tok_s": 74.2,
+        "finish": "stop"
+      },
+      {
+        "prompt": "One sentence: why does the sky appear blue?",
+        "answer": "The sky appears blue because molecules in the atmosphere scatter shorter-wavelength light (blue and violet) much more strongly than longer wavelengths (red and orange) \u2014 a process called Rayleigh scattering \u2014 and our eyes are more sensitive to blue than violet.",
+        "think_tokens": 70,
+        "answer_tokens": 51,
+        "latency_s": 1.64,
+        "tok_s": 74.0,
+        "finish": "stop"
+      }
+    ],
+    "coding": [
+      {
+        "fn": "two_sum",
+        "pass": true,
+        "answer": "```python\ndef two_sum(nums, target):\n    seen = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            return [seen[complement], i]\n        seen[num] = i\n```",
+        "think_tokens": 185,
+        "answer_tokens": 61,
+        "latency_s": 3.54,
+        "tok_s": 69.5,
+        "finish": "stop"
+      },
+      {
+        "fn": "is_palindrome",
+        "pass": true,
+        "answer": "```python\ndef is_palindrome(s):\n    cleaned = ''.join(c.lower() for c in s if c.isalnum())\n    return cleaned == cleaned[::-1]\n```",
+        "think_tokens": 131,
+        "answer_tokens": 40,
+        "latency_s": 2.4,
+        "tok_s": 71.2,
+        "finish": "stop"
+      },
+      {
+        "fn": "gcd",
+        "pass": true,
+        "answer": "```python\ndef gcd(a, b):\n    while b:\n        a, b = b, a % b\n    return abs(a)\n```",
+        "think_tokens": 33,
+        "answer_tokens": 35,
+        "latency_s": 0.94,
+        "tok_s": 72.7,
+        "finish": "stop"
+      },
+      {
+        "fn": "flatten",
+        "pass": true,
+        "answer": "```python\ndef flatten(xs):\n    result = []\n    for x in xs:\n        if isinstance(x, list):\n            result.extend(flatten(x))\n        else:\n            result.append(x)\n    return result\n```",
+        "think_tokens": 138,
+        "answer_tokens": 53,
+        "latency_s": 2.58,
+        "tok_s": 74.1,
+        "finish": "stop"
+      },
+      {
+        "fn": "max_subarray",
+        "pass": true,
+        "answer": "```python\ndef max_subarray(xs):\n    if not xs:\n        return 0\n    max_ending_here = xs[0]\n    max_so_far = xs[0]\n    for x in xs[1:]:\n        max_ending_here = max(x, max_ending_here + x)\n        max_so_far = max(max_so_far, max_ending_here)\n    return max_so_far\n```",
+        "think_tokens": 259,
+        "answer_tokens": 94,
+        "latency_s": 4.7,
+        "tok_s": 75.1,
+        "finish": "stop"
+      },
+      {
+        "fn": "roman_to_int",
+        "pass": true,
+        "answer": "```python\ndef roman_to_int(s: str) -> int:\n    values = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}\n    total = 0\n    for i in range(len(s)):\n        if i + 1 < len(s) and values[s[i]] < values[s[i + 1]]:\n            total -= values[s[i]]\n        else:\n            total += values[s[i]]\n    return total\n```",
+        "think_tokens": 83,
+        "answer_tokens": 137,
+        "latency_s": 3.07,
+        "tok_s": 71.6,
+        "finish": "stop"
+      },
+      {
+        "fn": "merge_intervals",
+        "pass": true,
+        "answer": "```python\ndef merge_intervals(intervals):\n    if not intervals:\n        return []\n    sorted_intervals = sorted(intervals, key=lambda x: x[0])\n    merged = [sorted_intervals[0]]\n    for start, end in sorted_intervals[1:]:\n        if start <= merged[-1][1]:\n            merged[-1][1] = max(merged[-1][1], end)\n        else:\n            merged.append([start, end])\n    return merged\n```",
+        "think_tokens": 77,
+        "answer_tokens": 110,
+        "latency_s": 2.53,
+        "tok_s": 74.0,
+        "finish": "stop"
+      },
+      {
+        "fn": "is_balanced",
+        "pass": true,
+        "answer": "```python\ndef is_balanced(s):\n    stack = []\n    pairs = {')': '(', ']': '[', '}': '{'}\n    for ch in s:\n        if ch in '([{':\n            stack.append(ch)\n        elif ch in ')]}':\n            if not stack or stack[-1] != pairs[ch]:\n                return False\n            stack.pop()\n    return not stack\n```",
+        "think_tokens": 119,
+        "answer_tokens": 93,
+        "latency_s": 2.81,
+        "tok_s": 75.4,
+        "finish": "stop"
+      },
+      {
+        "fn": "lis_length",
+        "pass": true,
+        "answer": "```python\nfrom bisect import bisect_left\n\ndef lis_length(xs):\n    tails = []\n    for x in xs:\n        i = bisect_left(tails, x)\n        if i == len(tails):\n            tails.append(x)\n        else:\n            tails[i] = x\n    return len(tails)\n```",
+        "think_tokens": 356,
+        "answer_tokens": 77,
+        "latency_s": 5.72,
+        "tok_s": 75.7,
+        "finish": "stop"
+      }
+    ],
+    "deepswe": [
+      {
+        "name": "fix_binary_search",
+        "pass": true,
+        "answer": "```python\ndef binary_search(arr, target):\n    lo, hi = 0, len(arr)\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid\n    return -1\n```\n\n**The bug:** `lo = mid` should be `lo = mid + 1`.\n\nSince the search space is the half-open interval `[lo, hi)`, after determining `arr[mid] < target` you must exclude `mid` from the next iteration. Setting `lo = mid` leaves `mid` in the range, which causes an infinite loop when `hi - lo == 1` (e.g., `lo=0, hi=1` \u2192 `mid=0` \u2192 `lo=0` again, forever). The fix `lo = mid + 1` correctly shrinks the interval and guarantees termination.",
+        "think_tokens": 578,
+        "answer_tokens": 221,
+        "latency_s": 10.76,
+        "tok_s": 74.3,
+        "finish": "stop"
+      },
+      {
+        "name": "impl_lru_cache",
+        "pass": true,
+        "answer": "```python\nclass Node:\n    def __init__(self, key=0, value=0):\n        self.key = key\n        self.value = value\n        self.prev = None\n        self.next = None\n\n\nclass LRUCache:\n    def __init__(self, capacity):\n        self.capacity = capacity\n        self.cache = {}\n        # Dummy head (most-recent end) and tail (least-recent end)\n        self.head = Node()\n        self.tail = Node()\n        self.head.next = self.tail\n        self.tail.prev = self.head\n\n    def _remove(self, node):\n        \"\"\"Unlink node from the list.\"\"\"\n        node.prev.next = node.next\n        node.next.prev = node.prev\n\n    def _add_to_front(self, node):\n        \"\"\"Insert node right after the dummy head (most-recent position).\"\"\"\n        node.next = self.head.next\n        node.prev = self.head\n        self.head.next.prev = node\n        self.head.next = node\n\n    def get(self, key):\n        if key in self.cache:\n            node = self.cache[key]\n            self._remove(node)\n            self._add_to_front(node)\n            return node.value\n        return -1\n\n    def put(self, key, value):\n        if key in self.cache:\n            node = self.cache[key]\n            node.value = value\n            self._remove(node)\n            self._add_to_front(node)\n        else:\n            node = Node(key, value)\n            self.cache[key] = node\n            self._add_to_front(node)\n            if len(self.cache) > self.capacity:\n                lru = self.tail.prev\n                self._remove(lru)\n                del self.cache[lru.key]\n```\n\n**How it works:**\n\n- A **doubly-linked list** (with dummy head/tail sentinels) maintains recency order: front = most recently used, back = least recently used.\n- A **hash map** (`self.cache`) gives O(1) lookup from key \u2192 node.\n- `get` / `put` both move the accessed node to the front, marking it as most-recently-used.\n- When `put` exceeds capacity, the node just before the dummy tail (the LRU entry) is unlinked and removed from the map.\n\nAll operations run in **O(1)** time.",
+        "think_tokens": 702,
+        "answer_tokens": 519,
+        "latency_s": 16.18,
+        "tok_s": 75.5,
+        "finish": "stop"
+      },
+      {
+        "name": "fix_csv_parse",
+        "pass": true,
+        "answer": "```python\ndef parse_csv_line(line):\n    fields = []\n    current = []\n    in_quotes = False\n    for char in line:\n        if char == '\"':\n            in_quotes = not in_quotes\n        elif char == ',' and not in_quotes:\n            fields.append(''.join(current))\n            current = []\n        else:\n            current.append(char)\n    fields.append(''.join(current))\n    return fields\n```\n\nThis works by tracking whether the parser is inside a quoted section. Commas only act as delimiters when `in_quotes` is `False`, and the quote characters themselves are consumed (toggling the flag) rather than appended to the field, so surrounding quotes are naturally stripped.\n\n- `'a,b,c'` \u2192 `['a', 'b', 'c']`\n- `'a,\"b,c\",d'` \u2192 `['a', 'b,c', 'd']`",
+        "think_tokens": 478,
+        "answer_tokens": 201,
+        "latency_s": 9.2,
+        "tok_s": 73.8,
+        "finish": "stop"
+      },
+      {
+        "name": "impl_rate_limiter",
+        "pass": true,
+        "answer": "```python\nclass TokenBucket:\n    def __init__(self, capacity, refill_per_sec):\n        self.capacity = capacity\n        self.refill_per_sec = refill_per_sec\n        self.tokens = capacity\n        self.last_time = None\n\n    def allow(self, now, cost=1):\n        if self.last_time is not None:\n            elapsed = now - self.last_time\n            self.tokens = min(self.capacity, self.tokens + elapsed * self.refill_per_sec)\n        self.last_time = now\n        if self.tokens >= cost:\n            self.tokens -= cost\n            return True\n        return False\n```",
+        "think_tokens": 452,
+        "answer_tokens": 135,
+        "latency_s": 7.77,
+        "tok_s": 75.6,
+        "finish": "stop"
+      },
+      {
+        "name": "fix_group_anagrams",
+        "pass": true,
+        "answer": "```python\ndef group_anagrams(words):\n    groups = {}\n    for w in words:\n        key = ''.join(sorted(w))\n        groups.setdefault(key, []).append(w)\n    return list(groups.values())\n```\n\nThe bug was that `key = w` used the word itself as the grouping key, so every word ended up in its own group. By sorting the characters (`''.join(sorted(w))`), all anagrams produce the same key and are correctly grouped together.",
+        "think_tokens": 85,
+        "answer_tokens": 106,
+        "latency_s": 2.76,
+        "tok_s": 69.2,
+        "finish": "stop"
+      }
+    ]
+  },
+  "reasoning": {
+    "n": 10,
+    "mean_think": 96.8,
+    "median_think": 78.5,
+    "max_think": 204,
+    "verifiable_acc": 1.0
+  },
+  "refusal": {
+    "n": 40,
+    "refused": 0,
+    "refusal_rate": 0.0
+  },
+  "coding": {
+    "n": 9,
+    "passed": 9,
+    "pass_at_1": 1.0
+  },
+  "deepswe": {
+    "n": 5,
+    "passed": 5,
+    "pass_at_1": 1.0
+  },
+  "speed": {
+    "mean_tok_s": 74.8,
+    "median_tok_s": 75.8,
+    "min_tok_s": 68.5,
+    "max_tok_s": 76.4,
+    "n_gen": 64
+  }
+}

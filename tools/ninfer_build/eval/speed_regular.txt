@@ -1,0 +1,11 @@
+=== speed_probe regular ===
+-- no-spec --
+summary     generated tokens          112
+summary     prefill speed             1.07k tok/s
+summary     decode speed              75.4 tok/s
+summary     throughput (overall)      73.1 tok/s
+-- dflash2 --
+summary     generated tokens          74
+summary     prefill speed             1.10k tok/s
+summary     decode speed              165.6 tok/s
+summary     dflash2 acceptance rate   28.0%

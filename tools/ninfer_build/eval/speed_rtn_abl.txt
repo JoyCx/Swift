@@ -1,0 +1,11 @@
+=== speed_probe rtn_abl ===
+-- no-spec --
+summary     generated tokens          86
+summary     prefill speed             1.70k tok/s
+summary     decode speed              76.9 tok/s
+summary     throughput (overall)      75.3 tok/s
+-- dflash2 --
+summary     generated tokens          87
+summary     prefill speed             1.10k tok/s
+summary     decode speed              174.0 tok/s
+summary     dflash2 acceptance rate   31.7%

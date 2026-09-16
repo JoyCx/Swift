@@ -1,0 +1,129 @@
+start Tue Sep 15 20:08:22 JST 2026
+recipe: 2 config_groups; ignore=303 modules (group_1 actorder=static)
+(swiftlab corpus unavailable: No module named 'swiftlab.calibrate' )
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (276700 > 262144). Running this sequence through the model will result in indexing errors
+calib pool: 62 docs -> 276700 tokens -> 135 windows of 2048
+Map:   0%|          | 0/16 [00:00<?, ? examples/s]Map: 100%|##########| 16/16 [00:00<00:00, 222.36 examples/s]
+calibration dataset: 16 samples
+loading model (device_map=auto, offload)...
+W0915 20:08:39.871000 7036 .venv\Lib\site-packages\torch\distributed\elastic\multiprocessing\redirects.py:29] NOTE: Redirects are currently not supported in Windows or MacOs.
+[transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Loading weights:   0%|          | 0/851 [00:00<?, ?it/s]Loading weights:   0%|          | 2/851 [00:01<08:40,  1.63it/s]Loading weights:   2%|1         | 13/851 [00:01<01:16, 10.93it/s]Loading weights:   3%|2         | 23/851 [00:01<00:42, 19.70it/s]Loading weights:   3%|3         | 28/851 [00:01<00:40, 20.27it/s]Loading weights:   4%|4         | 35/851 [00:02<00:33, 24.51it/s]Loading weights:   5%|4         | 41/851 [00:02<00:28, 28.53it/s]Loading weights:   5%|5         | 45/851 [00:02<00:29, 26.98it/s]Loading weights:   6%|5         | 49/851 [00:02<00:35, 22.41it/s]Loading weights:   6%|6         | 54/851 [00:02<00:30, 26.47it/s]Loading weights:   8%|7         | 65/851 [00:02<00:19, 39.53it/s]Loading weights:   8%|8         | 70/851 [00:03<00:23, 33.81it/s]Loading weights:   9%|9         | 79/851 [00:03<00:17, 43.71it/s]Loading weights:  10%|9         | 85/851 [00:03<00:21, 35.24it/s]Loading weights:  11%|#         | 93/851 [00:03<00:21, 35.94it/s]Loading weights:  12%|#1        | 98/851 [00:03<00:22, 33.02it/s]Loading weights:  12%|#1        | 102/851 [00:04<00:26, 28.75it/s]Loading weights:  14%|#3        | 115/851 [00:04<00:16, 44.33it/s]Loading weights:  14%|#4        | 121/851 [00:04<00:23, 31.29it/s]Loading weights:  16%|#5        | 132/851 [00:04<00:19, 36.28it/s]Loading weights:  16%|#6        | 137/851 [00:04<00:21, 33.63it/s]Loading weights:  17%|#7        | 146/851 [00:05<00:17, 41.17it/s]Loading weights:  18%|#7        | 151/851 [00:05<00:21, 31.95it/s]Loading weights:  18%|#8        | 155/851 [00:05<00:26, 25.94it/s]Loading weights:  19%|#8        | 161/851 [00:05<00:22, 31.11it/s]Loading weights:  20%|##        | 171/851 [00:05<00:16, 41.92it/s]Loading weights:  21%|##        | 177/851 [00:06<00:20, 33.54it/s]Loading weights:  22%|##1       | 185/851 [00:06<00:16, 39.89it/s]Loading weights:  22%|##2       | 190/851 [00:06<00:20, 32.29it/s]Loading weights:  23%|##3       | 197/851 [00:06<00:17, 37.99it/s]Loading weights:  24%|##3       | 202/851 [00:06<00:22, 29.37it/s]Loading weights:  24%|##4       | 206/851 [00:07<00:26, 23.98it/s]Loading weights:  26%|##5       | 218/851 [00:07<00:17, 37.17it/s]Loading weights:  26%|##6       | 223/851 [00:07<00:20, 30.56it/s]Loading weights:  27%|##6       | 227/851 [00:07<00:19, 31.91it/s]Loading weights:  28%|##7       | 236/851 [00:07<00:16, 36.58it/s]Loading weights:  28%|##8       | 241/851 [00:08<00:21, 27.90it/s]Loading weights:  29%|##9       | 251/851 [00:08<00:15, 38.79it/s]Loading weights:  30%|###       | 257/851 [00:08<00:19, 30.42it/s]Loading weights:  31%|###       | 262/851 [00:09<00:24, 24.02it/s]Loading weights:  31%|###1      | 266/851 [00:09<00:23, 25.39it/s]Loading weights:  32%|###2      | 275/851 [00:09<00:16, 34.86it/s]Loading weights:  33%|###2      | 280/851 [00:09<00:21, 26.65it/s]Loading weights:  34%|###3      | 288/851 [00:09<00:16, 34.53it/s]Loading weights:  34%|###4      | 293/851 [00:10<00:20, 27.01it/s]Loading weights:  35%|###4      | 297/851 [00:10<00:19, 28.40it/s]Loading weights:  35%|###5      | 301/851 [00:10<00:18, 30.30it/s]Loading weights:  36%|###5      | 306/851 [00:10<00:21, 25.84it/s]Loading weights:  36%|###6      | 310/851 [00:10<00:19, 27.86it/s]Loading weights:  37%|###6      | 314/851 [00:10<00:26, 20.57it/s]Loading weights:  37%|###7      | 319/851 [00:11<00:21, 24.34it/s]Loading weights:  38%|###8      | 327/851 [00:11<00:15, 33.55it/s]Loading weights:  39%|###9      | 332/851 [00:11<00:18, 27.57it/s]Loading weights:  39%|###9      | 336/851 [00:11<00:17, 28.95it/s]Loading weights:  40%|###9      | 340/851 [00:11<00:16, 30.55it/s]Loading weights:  40%|####      | 344/851 [00:11<00:21, 23.67it/s]Loading weights:  41%|####      | 347/851 [00:12<00:20, 24.48it/s]Loading weights:  42%|####1     | 356/851 [00:12<00:13, 35.68it/s]Loading weights:  42%|####2     | 361/851 [00:12<00:19, 24.68it/s]Loading weights:  43%|####2     | 365/851 [00:12<00:24, 19.60it/s]Loading weights:  44%|####4     | 378/851 [00:13<00:14, 33.77it/s]Loading weights:  45%|####5     | 383/851 [00:13<00:16, 28.23it/s]Loading weights:  45%|####5     | 387/851 [00:13<00:15, 29.73it/s]Loading weights:  47%|####6     | 397/851 [00:13<00:11, 39.97it/s]Loading weights:  47%|####7     | 402/851 [00:13<00:14, 29.96it/s]Loading weights:  48%|####7     | 406/851 [00:14<00:17, 26.15it/s]Loading weights:  49%|####8     | 414/851 [00:14<00:14, 30.73it/s]Loading weights: 100%|##########| 851/851 [00:14<00:00, 59.57it/s]
+Some parameters are on the meta device because they were offloaded to the cpu.
+model loaded in 21s; starting oneshot GPTQ
+2026-09-15T20:09:00.2628 | __init__ | WARNING - Disabling tokenizer parallelism due to threading conflict between FastTokenizer and Datasets. Set TOKENIZERS_PARALLELISM=false to suppress this warning.
+Dispatching model:   0%|          | 0/1063 [00:00<?, ?it/s]Dispatching model: 100%|##########| 1063/1063 [00:00<00:00, 27106.25it/s]
+2026-09-15T20:09:00.3407 | reset | INFO - Compression lifecycle reset
+2026-09-15T20:09:00.4032 | norm_calibration_context | INFO - Found 161 offset-norm modules to convert
+2026-09-15T20:09:00.5415 | from_modifiers | INFO - Creating recipe from modifiers
+Applying quantization config:   0%|          | 0/401 [00:00<?, ?it/s]Applying quantization config:  51%|#####1    | 205/401 [00:00<00:00, 1950.98it/s]Applying quantization config: 100%|##########| 401/401 [00:00<00:00, 625.25it/s] Applying quantization config: 100%|##########| 401/401 [00:00<00:00, 697.99it/s]
+2026-09-15T20:09:01.6643 | initialize | INFO - Compression lifecycle initialized for 1 modifiers
+2026-09-15T20:09:01.6648 | IndependentPipeline | INFO - Inferred `SequentialPipeline` for `GPTQModifier`
+W0915 20:09:20.107000 7036 .venv\Lib\site-packages\torch\fx\_symbolic_trace.py:53] is_fx_tracing will return true for both fx.symbolic_trace and torch.export. Please use is_fx_tracing_symbolic_tracing() for specifically fx.symbolic_trace or torch.compiler.is_compiling() for specifically torch.export/compile.
+Preparing cache:   0%|          | 0/16 [00:00<?, ?it/s]Preparing cache: 100%|##########| 16/16 [00:00<00:00, 1255.08it/s]
+(1/65): Calibrating:   0%|          | 0/16 [00:00<?, ?it/s](1/65): Calibrating:   6%|6         | 1/16 [00:04<01:04,  4.28s/it](1/65): Calibrating: 100%|##########| 16/16 [00:04<00:00,  3.72it/s]
+(1/65): Propagating:   0%|          | 0/16 [00:00<?, ?it/s](1/65): Propagating:  50%|#####     | 8/16 [00:00<00:00, 75.66it/s](1/65): Propagating: 100%|##########| 16/16 [00:00<00:00, 83.10it/s]
+(2/65): Calibrating:   0%|          | 0/16 [00:00<?, ?it/s](2/65): Calibrating:   6%|6         | 1/16 [00:42<10:36, 42.42s/it](2/65): Calibrating:  12%|#2        | 2/16 [00:42<04:06, 17.63s/it](2/65): Calibrating:  19%|#8        | 3/16 [00:42<02:05,  9.67s/it](2/65): Calibrating:  25%|##5       | 4/16 [00:43<01:11,  5.93s/it](2/65): Calibrating:  31%|###1      | 5/16 [00:43<00:42,  3.87s/it](2/65): Calibrating:  38%|###7      | 6/16 [00:43<00:26,  2.62s/it](2/65): Calibrating:  44%|####3     | 7/16 [00:43<00:16,  1.83s/it](2/65): Calibrating:  50%|#####     | 8/16 [00:43<00:10,  1.31s/it](2/65): Calibrating:  56%|#####6    | 9/16 [00:44<00:06,  1.03it/s](2/65): Calibrating:  62%|######2   | 10/16 [00:44<00:04,  1.36it/s](2/65): Calibrating:  69%|######8   | 11/16 [00:44<00:02,  1.75it/s](2/65): Calibrating:  75%|#######5  | 12/16 [00:44<00:01,  2.18it/s](2/65): Calibrating:  81%|########1 | 13/16 [00:44<00:01,  2.53it/s](2/65): Calibrating:  88%|########7 | 14/16 [00:45<00:00,  2.72it/s](2/65): Calibrating:  94%|#########3| 15/16 [00:45<00:00,  2.88it/s](2/65): Calibrating: 100%|##########| 16/16 [00:45<00:00,  3.03it/s](2/65): Calibrating: 100%|##########| 16/16 [00:45<00:00,  2.87s/it]
+2026-09-15T20:10:18.8895 | compress_module_list | INFO - Quantizing model.layers.0.linear_attn.in_proj_qkv using 16 samples
+2026-09-15T20:10:21.8752 | GPTQ | METRIC - time 2.99s
+2026-09-15T20:10:21.8752 | GPTQ | METRIC - error 2606.54
+2026-09-15T20:10:21.8757 | GPTQ | METRIC - Accelerator 0 | usage: 96.00% | total memory: 34.2 Gb
+2026-09-15T20:10:21.8757 | compress_module_list | INFO - Quantizing model.layers.0.linear_attn.in_proj_z using 16 samples
+2026-09-15T20:10:23.5589 | GPTQ | METRIC - time 1.68s
+2026-09-15T20:10:23.5589 | GPTQ | METRIC - error 1677.44
+2026-09-15T20:10:23.5589 | GPTQ | METRIC - Accelerator 0 | usage: 96.00% | total memory: 34.2 Gb
+2026-09-15T20:10:23.5594 | compress_module_list | INFO - Quantizing model.layers.0.linear_attn.out_proj using 16 samples
+2026-09-15T20:10:26.2422 | GPTQ | METRIC - time 2.68s
+2026-09-15T20:10:26.2422 | GPTQ | METRIC - error 1.05
+2026-09-15T20:10:26.2427 | GPTQ | METRIC - Accelerator 0 | usage: 96.00% | total memory: 34.2 Gb
+2026-09-15T20:10:26.2432 | compress_module_list | INFO - Quantizing model.layers.0.mlp.gate_proj using 16 samples
+2026-09-15T20:10:32.7080 | GPTQ | METRIC - time 6.46s
+2026-09-15T20:10:32.7080 | GPTQ | METRIC - error 247.44
+2026-09-15T20:10:32.7085 | GPTQ | METRIC - Accelerator 0 | usage: 96.00% | total memory: 34.2 Gb
+2026-09-15T20:10:32.7090 | compress_module_list | INFO - Quantizing model.layers.0.mlp.up_proj using 16 samples
+2026-09-15T20:10:39.6796 | GPTQ | METRIC - time 6.97s
+2026-09-15T20:10:39.6796 | GPTQ | METRIC - error 230.99
+2026-09-15T20:10:39.6796 | GPTQ | METRIC - Accelerator 0 | usage: 96.00% | total memory: 34.2 Gb
+2026-09-15T20:10:39.6811 | compress_module_list | INFO - Quantizing model.layers.0.mlp.down_proj using 16 samples
+2026-09-15T20:12:23.6248 | GPTQ | METRIC - time 103.94s
+2026-09-15T20:12:23.6248 | GPTQ | METRIC - error 0.81
+2026-09-15T20:12:23.6253 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+(2/65): Propagating:   0%|          | 0/16 [00:00<?, ?it/s](2/65): Propagating:   6%|6         | 1/16 [00:00<00:05,  2.50it/s](2/65): Propagating:  12%|#2        | 2/16 [00:00<00:05,  2.51it/s](2/65): Propagating:  19%|#8        | 3/16 [00:01<00:05,  2.37it/s](2/65): Propagating:  25%|##5       | 4/16 [00:01<00:05,  2.38it/s](2/65): Propagating:  31%|###1      | 5/16 [00:02<00:04,  2.45it/s](2/65): Propagating:  38%|###7      | 6/16 [00:02<00:04,  2.43it/s](2/65): Propagating:  44%|####3     | 7/16 [00:02<00:03,  2.48it/s](2/65): Propagating:  50%|#####     | 8/16 [00:03<00:03,  2.45it/s](2/65): Propagating:  56%|#####6    | 9/16 [00:03<00:02,  2.47it/s](2/65): Propagating:  62%|######2   | 10/16 [00:04<00:02,  2.45it/s](2/65): Propagating:  69%|######8   | 11/16 [00:04<00:02,  2.49it/s](2/65): Propagating:  75%|#######5  | 12/16 [00:04<00:01,  2.46it/s](2/65): Propagating:  81%|########1 | 13/16 [00:05<00:01,  2.50it/s](2/65): Propagating:  88%|########7 | 14/16 [00:05<00:00,  2.44it/s](2/65): Propagating:  94%|#########3| 15/16 [00:06<00:00,  2.45it/s](2/65): Propagating: 100%|##########| 16/16 [00:06<00:00,  2.42it/s](2/65): Propagating: 100%|##########| 16/16 [00:06<00:00,  2.45it/s]
+(3/65): Calibrating:   0%|          | 0/16 [00:00<?, ?it/s](3/65): Calibrating:  12%|#2        | 2/16 [00:05<00:39,  2.79s/it](3/65): Calibrating:  19%|#8        | 3/16 [00:10<00:47,  3.68s/it](3/65): Calibrating:  25%|##5       | 4/16 [00:15<00:51,  4.29s/it](3/65): Calibrating:  31%|###1      | 5/16 [00:20<00:49,  4.52s/it](3/65): Calibrating:  38%|###7      | 6/16 [00:26<00:47,  4.76s/it](3/65): Calibrating:  44%|####3     | 7/16 [00:30<00:43,  4.81s/it](3/65): Calibrating:  50%|#####     | 8/16 [00:36<00:39,  4.95s/it](3/65): Calibrating:  56%|#####6    | 9/16 [00:41<00:34,  4.94s/it](3/65): Calibrating:  62%|######2   | 10/16 [00:46<00:30,  5.04s/it](3/65): Calibrating:  69%|######8   | 11/16 [00:51<00:25,  5.00s/it](3/65): Calibrating:  75%|#######5  | 12/16 [00:56<00:20,  5.08s/it](3/65): Calibrating:  81%|########1 | 13/16 [01:01<00:15,  5.03s/it](3/65): Calibrating:  88%|########7 | 14/16 [01:06<00:10,  5.11s/it](3/65): Calibrating:  94%|#########3| 15/16 [01:11<00:05,  5.06s/it](3/65): Calibrating: 100%|##########| 16/16 [01:16<00:00,  5.12s/it](3/65): Calibrating: 100%|##########| 16/16 [01:16<00:00,  4.81s/it]
+2026-09-15T20:13:52.0233 | compress_module_list | INFO - Quantizing model.layers.1.linear_attn.in_proj_qkv using 16 samples
+2026-09-15T20:14:03.0183 | GPTQ | METRIC - time 10.99s
+2026-09-15T20:14:03.0183 | GPTQ | METRIC - error 93.61
+2026-09-15T20:14:03.0193 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+2026-09-15T20:14:03.0270 | compress_module_list | INFO - Quantizing model.layers.1.linear_attn.in_proj_z using 16 samples
+2026-09-15T20:14:10.6732 | GPTQ | METRIC - time 7.65s
+2026-09-15T20:14:10.6732 | GPTQ | METRIC - error 57.76
+2026-09-15T20:14:10.6732 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+2026-09-15T20:14:10.6798 | compress_module_list | INFO - Quantizing model.layers.1.linear_attn.out_proj using 16 samples
+2026-09-15T20:14:19.1902 | GPTQ | METRIC - time 8.51s
+2026-09-15T20:14:19.1902 | GPTQ | METRIC - error 0.38
+2026-09-15T20:14:19.1907 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+2026-09-15T20:14:19.1973 | compress_module_list | INFO - Quantizing model.layers.1.mlp.gate_proj using 16 samples
+2026-09-15T20:14:41.6070 | GPTQ | METRIC - time 22.41s
+2026-09-15T20:14:41.6075 | GPTQ | METRIC - error 519.68
+2026-09-15T20:14:41.6075 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+2026-09-15T20:14:41.6096 | compress_module_list | INFO - Quantizing model.layers.1.mlp.up_proj using 16 samples
+2026-09-15T20:14:57.7059 | GPTQ | METRIC - time 16.10s
+2026-09-15T20:14:57.7064 | GPTQ | METRIC - error 498.38
+2026-09-15T20:14:57.7064 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+2026-09-15T20:14:57.7258 | compress_module_list | INFO - Quantizing model.layers.1.mlp.down_proj using 16 samples
+2026-09-15T20:16:09.5398 | GPTQ | METRIC - time 71.81s
+2026-09-15T20:16:09.5404 | GPTQ | METRIC - error 1.50
+2026-09-15T20:16:09.5404 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+(3/65): Propagating:   0%|          | 0/16 [00:00<?, ?it/s](3/65): Propagating:   6%|6         | 1/16 [00:00<00:05,  2.54it/s](3/65): Propagating:  12%|#2        | 2/16 [00:00<00:05,  2.57it/s](3/65): Propagating:  19%|#8        | 3/16 [00:01<00:05,  2.40it/s](3/65): Propagating:  25%|##5       | 4/16 [00:01<00:04,  2.43it/s](3/65): Propagating:  31%|###1      | 5/16 [00:02<00:04,  2.47it/s](3/65): Propagating:  38%|###7      | 6/16 [00:02<00:04,  2.44it/s](3/65): Propagating:  44%|####3     | 7/16 [00:02<00:03,  2.49it/s](3/65): Propagating:  50%|#####     | 8/16 [00:03<00:03,  2.47it/s](3/65): Propagating:  56%|#####6    | 9/16 [00:03<00:02,  2.49it/s](3/65): Propagating:  62%|######2   | 10/16 [00:04<00:02,  2.44it/s](3/65): Propagating:  69%|######8   | 11/16 [00:04<00:02,  2.47it/s](3/65): Propagating:  75%|#######5  | 12/16 [00:04<00:01,  2.45it/s](3/65): Propagating:  81%|########1 | 13/16 [00:05<00:01,  2.48it/s](3/65): Propagating:  88%|########7 | 14/16 [00:05<00:00,  2.45it/s](3/65): Propagating:  94%|#########3| 15/16 [00:06<00:00,  2.45it/s](3/65): Propagating: 100%|##########| 16/16 [00:06<00:00,  2.43it/s](3/65): Propagating: 100%|##########| 16/16 [00:06<00:00,  2.46it/s]
+(4/65): Calibrating:   0%|          | 0/16 [00:00<?, ?it/s](4/65): Calibrating:  12%|#2        | 2/16 [00:05<00:38,  2.75s/it](4/65): Calibrating:  19%|#8        | 3/16 [00:10<00:48,  3.72s/it](4/65): Calibrating:  25%|##5       | 4/16 [00:16<00:53,  4.42s/it](4/65): Calibrating:  31%|###1      | 5/16 [00:20<00:50,  4.55s/it](4/65): Calibrating:  38%|###7      | 6/16 [00:26<00:47,  4.74s/it](4/65): Calibrating:  44%|####3     | 7/16 [00:30<00:42,  4.74s/it](4/65): Calibrating:  50%|#####     | 8/16 [00:36<00:39,  4.95s/it](4/65): Calibrating:  56%|#####6    | 9/16 [00:41<00:35,  5.06s/it](4/65): Calibrating:  62%|######2   | 10/16 [00:46<00:30,  5.15s/it](4/65): Calibrating:  69%|######8   | 11/16 [00:51<00:25,  5.09s/it](4/65): Calibrating:  75%|#######5  | 12/16 [00:57<00:20,  5.13s/it](4/65): Calibrating:  81%|########1 | 13/16 [01:02<00:15,  5.09s/it](4/65): Calibrating:  88%|########7 | 14/16 [01:07<00:10,  5.11s/it](4/65): Calibrating:  94%|#########3| 15/16 [01:12<00:05,  5.09s/it](4/65): Calibrating: 100%|##########| 16/16 [01:17<00:00,  5.14s/it](4/65): Calibrating: 100%|##########| 16/16 [01:17<00:00,  4.84s/it]
+2026-09-15T20:17:38.6603 | compress_module_list | INFO - Quantizing model.layers.2.linear_attn.in_proj_qkv using 16 samples
+2026-09-15T20:17:49.6189 | GPTQ | METRIC - time 10.96s
+2026-09-15T20:17:49.6189 | GPTQ | METRIC - error 143.81
+2026-09-15T20:17:49.6194 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+2026-09-15T20:17:49.6276 | compress_module_list | INFO - Quantizing model.layers.2.linear_attn.in_proj_z using 16 samples
+2026-09-15T20:17:56.9778 | GPTQ | METRIC - time 7.35s
+2026-09-15T20:17:56.9783 | GPTQ | METRIC - error 88.50
+2026-09-15T20:17:56.9783 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+2026-09-15T20:17:56.9851 | compress_module_list | INFO - Quantizing model.layers.2.linear_attn.out_proj using 16 samples
+2026-09-15T20:18:05.4729 | GPTQ | METRIC - time 8.49s
+2026-09-15T20:18:05.4734 | GPTQ | METRIC - error 0.53
+2026-09-15T20:18:05.4734 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+2026-09-15T20:18:05.4821 | compress_module_list | INFO - Quantizing model.layers.2.mlp.gate_proj using 16 samples
+2026-09-15T20:18:27.6193 | GPTQ | METRIC - time 22.14s
+2026-09-15T20:18:27.6193 | GPTQ | METRIC - error 1011.57
+2026-09-15T20:18:27.6198 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+2026-09-15T20:18:27.6213 | compress_module_list | INFO - Quantizing model.layers.2.mlp.up_proj using 16 samples
+2026-09-15T20:18:42.9318 | GPTQ | METRIC - time 15.31s
+2026-09-15T20:18:42.9318 | GPTQ | METRIC - error 949.65
+2026-09-15T20:18:42.9324 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+2026-09-15T20:18:42.9517 | compress_module_list | INFO - Quantizing model.layers.2.mlp.down_proj using 16 samples
+2026-09-15T20:19:53.0951 | GPTQ | METRIC - time 70.14s
+2026-09-15T20:19:53.0956 | GPTQ | METRIC - error 4.52
+2026-09-15T20:19:53.0961 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+(4/65): Propagating:   0%|          | 0/16 [00:00<?, ?it/s](4/65): Propagating:   6%|6         | 1/16 [00:00<00:06,  2.47it/s](4/65): Propagating:  12%|#2        | 2/16 [00:00<00:05,  2.51it/s](4/65): Propagating:  19%|#8        | 3/16 [00:01<00:05,  2.36it/s](4/65): Propagating:  25%|##5       | 4/16 [00:01<00:05,  2.37it/s](4/65): Propagating:  31%|###1      | 5/16 [00:02<00:04,  2.45it/s](4/65): Propagating:  38%|###7      | 6/16 [00:02<00:04,  2.44it/s](4/65): Propagating:  44%|####3     | 7/16 [00:02<00:03,  2.48it/s](4/65): Propagating:  50%|#####     | 8/16 [00:03<00:03,  2.46it/s](4/65): Propagating:  56%|#####6    | 9/16 [00:03<00:02,  2.49it/s](4/65): Propagating:  62%|######2   | 10/16 [00:04<00:02,  2.44it/s](4/65): Propagating:  69%|######8   | 11/16 [00:04<00:02,  2.48it/s](4/65): Propagating:  75%|#######5  | 12/16 [00:04<00:01,  2.46it/s](4/65): Propagating:  81%|########1 | 13/16 [00:05<00:01,  2.50it/s](4/65): Propagating:  88%|########7 | 14/16 [00:05<00:00,  2.47it/s](4/65): Propagating:  94%|#########3| 15/16 [00:06<00:00,  2.47it/s](4/65): Propagating: 100%|##########| 16/16 [00:06<00:00,  2.43it/s](4/65): Propagating: 100%|##########| 16/16 [00:06<00:00,  2.45it/s]
+(5/65): Calibrating:   0%|          | 0/16 [00:00<?, ?it/s](5/65): Calibrating:   6%|6         | 1/16 [00:01<00:29,  1.99s/it](5/65): Calibrating:  12%|#2        | 2/16 [00:07<00:54,  3.86s/it](5/65): Calibrating:  19%|#8        | 3/16 [00:13<01:03,  4.88s/it](5/65): Calibrating:  25%|##5       | 4/16 [00:19<01:04,  5.37s/it](5/65): Calibrating:  31%|###1      | 5/16 [00:25<01:02,  5.70s/it](5/65): Calibrating:  38%|###7      | 6/16 [00:31<00:58,  5.81s/it](5/65): Calibrating:  44%|####3     | 7/16 [00:37<00:53,  5.93s/it](5/65): Calibrating:  50%|#####     | 8/16 [00:44<00:49,  6.14s/it](5/65): Calibrating:  56%|#####6    | 9/16 [00:50<00:43,  6.19s/it](5/65): Calibrating:  62%|######2   | 10/16 [00:56<00:37,  6.19s/it](5/65): Calibrating:  69%|######8   | 11/16 [01:03<00:31,  6.21s/it](5/65): Calibrating:  75%|#######5  | 12/16 [01:09<00:24,  6.22s/it](5/65): Calibrating:  81%|########1 | 13/16 [01:15<00:18,  6.18s/it](5/65): Calibrating:  88%|########7 | 14/16 [01:21<00:12,  6.18s/it](5/65): Calibrating:  94%|#########3| 15/16 [01:27<00:06,  6.21s/it](5/65): Calibrating: 100%|##########| 16/16 [01:34<00:00,  6.24s/it](5/65): Calibrating: 100%|##########| 16/16 [01:34<00:00,  5.89s/it]
+2026-09-15T20:21:40.3868 | compress_module_list | INFO - Quantizing model.layers.3.self_attn.q_proj using 16 samples
+2026-09-15T20:21:47.8741 | GPTQ | METRIC - time 7.49s
+2026-09-15T20:21:47.8741 | GPTQ | METRIC - error 1522.20
+2026-09-15T20:21:47.8741 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+2026-09-15T20:21:47.8746 | compress_module_list | INFO - Quantizing model.layers.3.self_attn.k_proj using 16 samples
+2026-09-15T20:21:54.6983 | GPTQ | METRIC - time 6.82s
+2026-09-15T20:21:54.6988 | GPTQ | METRIC - error 84.44
+2026-09-15T20:21:54.6988 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+2026-09-15T20:21:54.6993 | compress_module_list | INFO - Quantizing model.layers.3.self_attn.v_proj using 16 samples
+2026-09-15T20:22:01.4265 | GPTQ | METRIC - time 6.73s
+2026-09-15T20:22:01.4270 | GPTQ | METRIC - error 90.30
+2026-09-15T20:22:01.4270 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+2026-09-15T20:22:01.4275 | compress_module_list | INFO - Quantizing model.layers.3.self_attn.o_proj using 16 samples
+2026-09-15T20:22:11.9636 | GPTQ | METRIC - time 10.54s
+2026-09-15T20:22:11.9636 | GPTQ | METRIC - error 0.41
+2026-09-15T20:22:11.9641 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+2026-09-15T20:22:11.9677 | compress_module_list | INFO - Quantizing model.layers.3.mlp.gate_proj using 16 samples
+2026-09-15T20:22:32.8037 | GPTQ | METRIC - time 20.84s
+2026-09-15T20:22:32.8048 | GPTQ | METRIC - error 1045.58
+2026-09-15T20:22:32.8048 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+2026-09-15T20:22:32.8191 | compress_module_list | INFO - Quantizing model.layers.3.mlp.up_proj using 16 samples
+2026-09-15T20:22:47.2660 | GPTQ | METRIC - time 14.45s
+2026-09-15T20:22:47.2660 | GPTQ | METRIC - error 1014.04
+2026-09-15T20:22:47.2665 | GPTQ | METRIC - Accelerator 0 | usage: 97.22% | total memory: 34.2 Gb
+2026-09-15T20:22:47.2833 | compress_module_list | INFO - Quantizing model.layers.3.mlp.down_proj using 16 samples

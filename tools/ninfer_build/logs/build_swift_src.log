@@ -1,0 +1,15 @@
+restart Tue Sep 15 18:01:50 JST 2026
+bf16 aux copied: 449
+fp8 quantized: 233
+nvfp4 quantized: 168 across 56 layers
+  shard 1: 497 tensors, 1.98 GiB
+  shard 2: 124 tensors, 1.98 GiB
+  shard 3: 120 tensors, 1.97 GiB
+  shard 4: 88 tensors, 2.00 GiB
+  shard 5: 84 tensors, 1.99 GiB
+  shard 6: 170 tensors, 1.99 GiB
+  shard 7: 168 tensors, 1.96 GiB
+  shard 8: 168 tensors, 1.96 GiB
+  shard 9: 168 tensors, 1.96 GiB
+wrote 1587 tensors in 9 shards to A:\models\swift-nvfp4-source in 69s
+EXIT_OK

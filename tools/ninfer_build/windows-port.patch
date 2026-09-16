@@ -1,0 +1,760 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 98ac0bbd..4243b3e6 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -28,6 +28,15 @@ if(NOT CMAKE_BUILD_TYPE)
+   set(CMAKE_BUILD_TYPE Release)
+ endif()
+ 
++if(MSVC)
++  add_compile_definitions(CCCL_IGNORE_MSVC_TRADITIONAL_PREPROCESSOR_WARNING NOMINMAX WIN32_LEAN_AND_MEAN)
++  add_compile_options(
++    $<$<COMPILE_LANGUAGE:C,CXX>:/Zc:preprocessor>
++    $<$<COMPILE_LANGUAGE:C,CXX>:/utf-8>
++    $<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler=/Zc:preprocessor,/utf-8>
++  )
++endif()
++
+ if(CMAKE_GENERATOR MATCHES "Ninja")
+   set_property(GLOBAL PROPERTY JOB_POOLS cuda_link=1)
+   set(CMAKE_JOB_POOL_LINK cuda_link)
+diff --git a/apps/perplexity/main.cpp b/apps/perplexity/main.cpp
+index 2a2b70ec..7cc9027f 100644
+--- a/apps/perplexity/main.cpp
++++ b/apps/perplexity/main.cpp
+@@ -9,6 +9,10 @@
+ #include <nlohmann/json.hpp>
+ #include <spdlog/logger.h>
+ 
++#ifdef _WIN32
++#include "compat/win_posix.h"
++#endif
++
+ #include <algorithm>
+ #include <charconv>
+ #include <chrono>
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 3e99d8c7..d4efe0a9 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -6,6 +6,10 @@ function(ninfer_internal_includes target)
+     ${PROJECT_SOURCE_DIR}/third_party/utf8proc)
+ endfunction()
+ 
++if(MSVC)
++  add_compile_definitions(NINFER_DISABLE_TMA=1)
++endif()
++
+ function(ninfer_cuda_archive target)
+   set_target_properties(${target} PROPERTIES
+     CUDA_SEPARABLE_COMPILATION ON
+@@ -314,6 +318,7 @@ add_library(ninfer_text STATIC
+   text/unicode.cpp
+   ${PROJECT_SOURCE_DIR}/third_party/utf8proc/utf8proc.c)
+ ninfer_internal_includes(ninfer_text)
++target_compile_definitions(ninfer_text PUBLIC UTF8PROC_STATIC)
+ 
+ add_library(ninfer_media_decode STATIC
+   media/decode/decode.cpp)
+diff --git a/src/artifact/reader.cpp b/src/artifact/reader.cpp
+index 56bce38c..b5fcdf00 100644
+--- a/src/artifact/reader.cpp
++++ b/src/artifact/reader.cpp
+@@ -15,10 +15,15 @@
+ #include <unordered_map>
+ #include <utility>
+ 
++#ifdef _WIN32
++#include "compat/win_posix.h"
++#include <windows.h>
++#else
+ #include <fcntl.h>
+ #include <sys/mman.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
++#endif
+ 
+ namespace ninfer::artifact {
+ namespace {
+@@ -174,6 +179,108 @@ struct TransparentStringHash {
+     }
+ };
+ 
++#ifdef _WIN32
++class MappedFile {
++public:
++    explicit MappedFile(const std::filesystem::path& path) {
++        HANDLE file_handle = ::CreateFileW(
++            path.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING,
++            FILE_ATTRIBUTE_NORMAL, nullptr);
++        if (file_handle == INVALID_HANDLE_VALUE) {
++            throw std::system_error(static_cast<int>(::GetLastError()), std::system_category(),
++                                    "open " + path.string());
++        }
++
++        LARGE_INTEGER file_size{};
++        if (!::GetFileSizeEx(file_handle, &file_size)) {
++            const auto error = ::GetLastError();
++            ::CloseHandle(file_handle);
++            throw std::system_error(static_cast<int>(error), std::system_category(),
++                                    "GetFileSizeEx " + path.string());
++        }
++        if (file_size.QuadPart < 0 ||
++            static_cast<std::uint64_t>(file_size.QuadPart) >
++                std::numeric_limits<std::size_t>::max()) {
++            ::CloseHandle(file_handle);
++            throw ArtifactError("artifact size does not fit the process address space");
++        }
++
++        const auto size       = static_cast<std::size_t>(file_size.QuadPart);
++        void* mapping         = nullptr;
++        HANDLE mapping_handle = nullptr;
++        if (size != 0) {
++            mapping_handle =
++                ::CreateFileMappingW(file_handle, nullptr, PAGE_READONLY, 0, 0, nullptr);
++            if (mapping_handle == nullptr) {
++                const auto error = ::GetLastError();
++                ::CloseHandle(file_handle);
++                throw std::system_error(static_cast<int>(error), std::system_category(),
++                                        "CreateFileMapping " + path.string());
++            }
++            mapping = ::MapViewOfFile(mapping_handle, FILE_MAP_READ, 0, 0, size);
++            if (mapping == nullptr) {
++                const auto error = ::GetLastError();
++                ::CloseHandle(mapping_handle);
++                ::CloseHandle(file_handle);
++                throw std::system_error(static_cast<int>(error), std::system_category(),
++                                        "MapViewOfFile " + path.string());
++            }
++        }
++        file_handle_    = file_handle;
++        mapping_handle_ = mapping_handle;
++        data_           = static_cast<const std::byte*>(mapping);
++        size_           = size;
++    }
++
++    ~MappedFile() {
++        if (data_ != nullptr) { ::UnmapViewOfFile(data_); }
++        if (mapping_handle_ != nullptr) { ::CloseHandle(mapping_handle_); }
++        if (file_handle_ != INVALID_HANDLE_VALUE && file_handle_ != nullptr) {
++            ::CloseHandle(file_handle_);
++        }
++    }
++
++    MappedFile(const MappedFile&)            = delete;
++    MappedFile& operator=(const MappedFile&) = delete;
++
++    const std::byte* data() const noexcept { return data_; }
++
++    std::size_t size() const noexcept { return size_; }
++
++    std::size_t read_direct(std::uint64_t absolute_offset,
++                            std::span<std::byte> destination) const {
++        constexpr std::size_t alignment = Reader::direct_io_alignment;
++        if (absolute_offset % alignment != 0 || destination.size() % alignment != 0 ||
++            reinterpret_cast<std::uintptr_t>(destination.data()) % alignment != 0) {
++            throw ArtifactError("direct artifact read is not 4096-byte aligned");
++        }
++        if (destination.size() > static_cast<std::size_t>(std::numeric_limits<DWORD>::max())) {
++            throw ArtifactError("direct artifact read exceeds platform I/O limits");
++        }
++
++        OVERLAPPED overlapped{};
++        overlapped.Offset     = static_cast<DWORD>(absolute_offset & 0xFFFFFFFF);
++        overlapped.OffsetHigh = static_cast<DWORD>((absolute_offset >> 32) & 0xFFFFFFFF);
++
++        DWORD bytes_read = 0;
++        if (!::ReadFile(file_handle_, destination.data(),
++                        static_cast<DWORD>(destination.size()), &bytes_read, &overlapped)) {
++            const auto error = ::GetLastError();
++            if (error != ERROR_HANDLE_EOF) {
++                throw std::system_error(static_cast<int>(error), std::system_category(),
++                                        "direct artifact read");
++            }
++        }
++        return static_cast<std::size_t>(bytes_read);
++    }
++
++private:
++    HANDLE file_handle_    = INVALID_HANDLE_VALUE;
++    HANDLE mapping_handle_ = nullptr;
++    const std::byte* data_ = nullptr;
++    std::size_t size_      = 0;
++};
++#else
+ class MappedFile {
+ public:
+     explicit MappedFile(const std::filesystem::path& path) {
+@@ -249,6 +356,7 @@ private:
+     const std::byte* data_ = nullptr;
+     std::size_t size_      = 0;
+ };
++#endif
+ 
+ } // namespace
+ 
+diff --git a/src/ops/attn_input_proj/nvfp4/nvfp4_attn_input_w4a4.cu b/src/ops/attn_input_proj/nvfp4/nvfp4_attn_input_w4a4.cu
+index 56835368..aafc2c22 100644
+--- a/src/ops/attn_input_proj/nvfp4/nvfp4_attn_input_w4a4.cu
++++ b/src/ops/attn_input_proj/nvfp4/nvfp4_attn_input_w4a4.cu
+@@ -85,6 +85,7 @@ void nvfp4_attn_input_w4a4_launch(const Tensor& x, const Weight& weight, Tensor&
+                                   cudaStream_t stream) {
+     launch_nvfp4_w4a4_quantize(x, weight, workspace, stream);
+     const std::int32_t tokens = x.ne[1];
++#if !defined(NINFER_DISABLE_TMA)
+     if (tokens >= 1024 && (tokens % kTmaBlockM) == 0) {
+         const float alpha = 1.0F / (weight.input_scale_divisor * weight.weight_scale_divisor);
+         launch_nvfp4_w4a4_tma_attention(
+@@ -92,7 +93,9 @@ void nvfp4_attn_input_w4a4_launch(const Tensor& x, const Weight& weight, Tensor&
+             static_cast<const std::uint8_t*>(weight.scales), static_cast<__nv_bfloat16*>(q.data),
+             static_cast<__nv_bfloat16*>(gate.data), static_cast<__nv_bfloat16*>(k.data),
+             static_cast<__nv_bfloat16*>(v.data), tokens, alpha, stream);
+-    } else if (tokens <= 64) {
++    } else
++#endif
++    if (tokens <= 64) {
+         launch_gemm<M32N64>(weight, q, gate, k, v, workspace, tokens, stream);
+     } else if (tokens <= 96) {
+         launch_gemm<M32N128>(weight, q, gate, k, v, workspace, tokens, stream);
+diff --git a/src/ops/gdn_input_proj/nvfp4/nvfp4_gdn_input_w4a4.cu b/src/ops/gdn_input_proj/nvfp4/nvfp4_gdn_input_w4a4.cu
+index f56a4cd0..041caca9 100644
+--- a/src/ops/gdn_input_proj/nvfp4/nvfp4_gdn_input_w4a4.cu
++++ b/src/ops/gdn_input_proj/nvfp4/nvfp4_gdn_input_w4a4.cu
+@@ -39,13 +39,16 @@ void nvfp4_gdn_input_w4a4_launch(const Tensor& x, const Weight& weight, Tensor&
+                                  Nvfp4W4a4Workspace workspace, cudaStream_t stream) {
+     launch_nvfp4_w4a4_quantize(x, weight, workspace, stream);
+     const std::int32_t tokens = x.ne[1];
++#if !defined(NINFER_DISABLE_TMA)
+     if (tokens >= 1024 && (tokens % kTmaBlockM) == 0) {
+         const float alpha = 1.0F / (weight.input_scale_divisor * weight.weight_scale_divisor);
+         launch_nvfp4_w4a4_tma_gdn(
+             workspace.codes, workspace.scales, static_cast<const std::uint8_t*>(weight.qdata),
+             static_cast<const std::uint8_t*>(weight.scales), static_cast<__nv_bfloat16*>(qkv.data),
+             static_cast<__nv_bfloat16*>(z.data), tokens, alpha, stream);
+-    } else if (tokens <= 64) {
++    } else
++#endif
++    if (tokens <= 64) {
+         launch_gemm<M32N64>(weight, qkv, z, workspace, tokens, stream);
+     } else if (tokens <= 96) {
+         launch_gemm<M32N128>(weight, qkv, z, workspace, tokens, stream);
+diff --git a/src/ops/linear/nvfp4/nvfp4_w4a4.cu b/src/ops/linear/nvfp4/nvfp4_w4a4.cu
+index 156871fb..c7c6a18b 100644
+--- a/src/ops/linear/nvfp4/nvfp4_w4a4.cu
++++ b/src/ops/linear/nvfp4/nvfp4_w4a4.cu
+@@ -54,6 +54,7 @@ void launch_problem(const Weight& weight, Tensor& out, Nvfp4W4a4Workspace worksp
+                     std::int32_t tokens, cudaStream_t stream) {
+     constexpr bool kResidualGeometry = std::is_same_v<Geometry, Nvfp4Residual6144Geometry> ||
+                                        std::is_same_v<Geometry, Nvfp4Residual17408Geometry>;
++#if !defined(NINFER_DISABLE_TMA)
+     if (tokens >= 1024 && (tokens % kTmaBlockM) == 0) {
+         const float alpha = 1.0F / (weight.input_scale_divisor * weight.weight_scale_divisor);
+         launch_nvfp4_w4a4_tma_linear(
+@@ -61,7 +62,9 @@ void launch_problem(const Weight& weight, Tensor& out, Nvfp4W4a4Workspace worksp
+             workspace.scales, static_cast<const std::uint8_t*>(weight.qdata),
+             static_cast<const std::uint8_t*>(weight.scales), static_cast<__nv_bfloat16*>(out.data),
+             tokens, alpha, stream);
+-    } else if (tokens <= 64) {
++    } else
++#endif
++    if (tokens <= 64) {
+         launch_gemm<Geometry, M32N64>(weight, out, workspace, tokens, stream);
+     } else if (tokens <= 96) {
+         launch_gemm<Geometry, M32N128>(weight, out, workspace, tokens, stream);
+diff --git a/src/ops/linear/nvfp4/nvfp4_w4a4_tma.cu b/src/ops/linear/nvfp4/nvfp4_w4a4_tma.cu
+index 19dacec6..288a525a 100644
+--- a/src/ops/linear/nvfp4/nvfp4_w4a4_tma.cu
++++ b/src/ops/linear/nvfp4/nvfp4_w4a4_tma.cu
+@@ -1,5 +1,7 @@
+ #include "ops/linear/nvfp4/nvfp4_w4a4_tma_launch.h"
+ 
++#if !defined(NINFER_DISABLE_TMA)
++
+ #include "core/device.h"
+ #include "ops/gdn_input_proj/nvfp4/nvfp4_gdn_input_output.cuh"
+ #include "ops/linear/nvfp4/nvfp4_config.h"
+@@ -174,3 +176,39 @@ void launch_nvfp4_w4a4_tma_linear_add(Nvfp4Problem problem, const std::uint8_t*
+ }
+ 
+ } // namespace ninfer::ops::detail
++
++#else
++
++#include <stdexcept>
++
++namespace ninfer::ops::detail {
++
++void launch_nvfp4_w4a4_tma_linear(Nvfp4Problem, const std::uint8_t*, const std::uint8_t*,
++                                  const std::uint8_t*, const std::uint8_t*, __nv_bfloat16*,
++                                  std::int32_t, float, cudaStream_t) {
++    throw std::runtime_error("nvfp4 TMA linear is disabled on MSVC / Windows");
++}
++
++void launch_nvfp4_w4a4_tma_attention(const std::uint8_t*, const std::uint8_t*,
++                                     const std::uint8_t*, const std::uint8_t*, __nv_bfloat16*,
++                                     __nv_bfloat16*, __nv_bfloat16*, __nv_bfloat16*,
++                                     std::int32_t, float, cudaStream_t) {
++    throw std::runtime_error("nvfp4 TMA attention is disabled on MSVC / Windows");
++}
++
++void launch_nvfp4_w4a4_tma_gdn(const std::uint8_t*, const std::uint8_t*,
++                               const std::uint8_t*, const std::uint8_t*,
++                               __nv_bfloat16*, __nv_bfloat16*, std::int32_t,
++                               float, cudaStream_t) {
++    throw std::runtime_error("nvfp4 TMA GDN is disabled on MSVC / Windows");
++}
++
++void launch_nvfp4_w4a4_tma_linear_add(Nvfp4Problem, const std::uint8_t*, const std::uint8_t*,
++                                      const std::uint8_t*, const std::uint8_t*, __nv_bfloat16*,
++                                      std::int32_t, float, cudaStream_t) {
++    throw std::runtime_error("nvfp4 TMA linear add is disabled on MSVC / Windows");
++}
++
++} // namespace ninfer::ops::detail
++
++#endif
+diff --git a/src/ops/linear_add/nvfp4/nvfp4_linear_add_w4a4.cu b/src/ops/linear_add/nvfp4/nvfp4_linear_add_w4a4.cu
+index 4dc44ba3..225fd506 100644
+--- a/src/ops/linear_add/nvfp4/nvfp4_linear_add_w4a4.cu
++++ b/src/ops/linear_add/nvfp4/nvfp4_linear_add_w4a4.cu
+@@ -59,6 +59,7 @@ void nvfp4_linear_add_w4a4_launch(const Tensor& x, const Weight& weight, Tensor&
+     launch_nvfp4_w4a4_quantize(x, weight, workspace, stream);
+     const std::int32_t tokens  = x.ne[1];
+     const Nvfp4Problem problem = resolve_nvfp4_problem(weight.n, weight.k);
++#if !defined(NINFER_DISABLE_TMA)
+     if (tokens >= 1024 && (tokens % kTmaBlockM) == 0) {
+         const float alpha = 1.0F / (weight.input_scale_divisor * weight.weight_scale_divisor);
+         launch_nvfp4_w4a4_tma_linear_add(problem, workspace.codes, workspace.scales,
+@@ -68,6 +69,7 @@ void nvfp4_linear_add_w4a4_launch(const Tensor& x, const Weight& weight, Tensor&
+                                          stream);
+         return;
+     }
++#endif
+     switch (problem) {
+     case Nvfp4Problem::Residual6144:
+         launch_problem<Nvfp4Residual6144Geometry>(weight, residual, workspace, tokens, stream);
+diff --git a/src/ops/linear_swiglu/nvfp4/nvfp4_linear_swiglu_plan.cpp b/src/ops/linear_swiglu/nvfp4/nvfp4_linear_swiglu_plan.cpp
+index 5912b5d6..e3209417 100644
+--- a/src/ops/linear_swiglu/nvfp4/nvfp4_linear_swiglu_plan.cpp
++++ b/src/ops/linear_swiglu/nvfp4/nvfp4_linear_swiglu_plan.cpp
+@@ -37,9 +37,11 @@ Nvfp4LinearSwiGluRoute resolve_route(LinearPolicy policy, std::int32_t tokens) {
+     if (tokens == 1) { return Nvfp4LinearSwiGluRoute::DecodeFusedA16; }
+     if (tokens <= 4) { return Nvfp4LinearSwiGluRoute::SmallTFusedA16; }
+     if (tokens <= kFusedMaxTokens) { return Nvfp4LinearSwiGluRoute::FusedW4A4; }
++#if !defined(NINFER_DISABLE_TMA)
+     if (tokens >= kTmaBlockM && (tokens % kTmaBlockM) == 0) {
+         return Nvfp4LinearSwiGluRoute::TmaFusedW4A4;
+     }
++#endif
+     return Nvfp4LinearSwiGluRoute::LinearW4A4Post;
+ }
+ 
+diff --git a/src/ops/linear_swiglu/nvfp4/nvfp4_linear_swiglu_w4a4_tma.cu b/src/ops/linear_swiglu/nvfp4/nvfp4_linear_swiglu_w4a4_tma.cu
+index 0127a8d1..cfbff649 100644
+--- a/src/ops/linear_swiglu/nvfp4/nvfp4_linear_swiglu_w4a4_tma.cu
++++ b/src/ops/linear_swiglu/nvfp4/nvfp4_linear_swiglu_w4a4_tma.cu
+@@ -1,5 +1,7 @@
+ #include "ops/linear_swiglu/nvfp4/nvfp4_linear_swiglu_w4a4_tma_launch.h"
+ 
++#if !defined(NINFER_DISABLE_TMA)
++
+ #include "core/device.h"
+ #include "ops/linear/nvfp4/nvfp4_config.h"
+ #include "ops/linear/nvfp4/nvfp4_w4a4_tma.cuh"
+@@ -77,3 +79,20 @@ void launch_nvfp4_linear_swiglu_w4a4_tma(const std::uint8_t* activation_codes,
+ }
+ 
+ } // namespace ninfer::ops::detail
++
++#else
++
++#include <stdexcept>
++
++namespace ninfer::ops::detail {
++
++void launch_nvfp4_linear_swiglu_w4a4_tma(const std::uint8_t*, const std::uint8_t*,
++                                         const std::uint8_t*, const std::uint8_t*,
++                                         __nv_bfloat16*, std::int32_t, float,
++                                         cudaStream_t) {
++    throw std::runtime_error("nvfp4 LinearSwiGLU TMA is disabled on MSVC / Windows");
++}
++
++} // namespace ninfer::ops::detail
++
++#endif
+diff --git a/src/product/logging/logging.cpp b/src/product/logging/logging.cpp
+index 2be483c4..1b6e1a9a 100644
+--- a/src/product/logging/logging.cpp
++++ b/src/product/logging/logging.cpp
+@@ -5,7 +5,11 @@
+ #include <spdlog/sinks/sink.h>
+ #include <spdlog/sinks/stdout_color_sinks.h>
+ 
++#ifdef _WIN32
++#include "compat/win_posix.h"
++#else
+ #include <unistd.h>
++#endif
+ 
+ #include <atomic>
+ #include <chrono>
+diff --git a/src/product/logging/startup_log.cpp b/src/product/logging/startup_log.cpp
+index f8faf092..41652ec2 100644
+--- a/src/product/logging/startup_log.cpp
++++ b/src/product/logging/startup_log.cpp
+@@ -5,8 +5,13 @@
+ 
+ #include <spdlog/logger.h>
+ 
++#ifdef _WIN32
++#include "compat/win_posix.h"
++#include <windows.h>
++#else
+ #include <sys/ioctl.h>
+ #include <unistd.h>
++#endif
+ 
+ #include <algorithm>
+ #include <array>
+@@ -76,9 +81,18 @@ PhasePresentation phase_presentation(StartupPhase phase) noexcept {
+ }
+ 
+ std::size_t terminal_columns() noexcept {
++#ifdef _WIN32
++    CONSOLE_SCREEN_BUFFER_INFO csbi{};
++    if (::GetConsoleScreenBufferInfo(::GetStdHandle(STD_ERROR_HANDLE), &csbi)) {
++        const int cols = csbi.srWindow.Right - csbi.srWindow.Left + 1;
++        if (cols > 0) { return static_cast<std::size_t>(cols); }
++    }
++    return 120;
++#else
+     winsize size{};
+     if (::ioctl(STDERR_FILENO, TIOCGWINSZ, &size) == 0 && size.ws_col != 0) { return size.ws_col; }
+     return 120;
++#endif
+ }
+ 
+ std::string progress_bar(double ratio, std::size_t width) {
+diff --git a/src/product/media_acquire/acquire.cpp b/src/product/media_acquire/acquire.cpp
+index 24644492..d8aab629 100644
+--- a/src/product/media_acquire/acquire.cpp
++++ b/src/product/media_acquire/acquire.cpp
+@@ -2,9 +2,21 @@
+ 
+ #include <curl/curl.h>
+ 
++#ifdef _WIN32
++#ifndef WIN32_LEAN_AND_MEAN
++#define WIN32_LEAN_AND_MEAN
++#endif
++#ifndef NOMINMAX
++#define NOMINMAX
++#endif
++#include <winsock2.h>
++#include <ws2tcpip.h>
++#pragma comment(lib, "ws2_32.lib")
++#else
+ #include <arpa/inet.h>
+ #include <netdb.h>
+ #include <sys/socket.h>
++#endif
+ 
+ #include <algorithm>
+ #include <array>
+@@ -287,7 +299,7 @@ std::vector<std::uint8_t> read_path(const Source& source, const Policy& policy)
+     if (!policy.media_root.empty()) {
+         const std::filesystem::path root = std::filesystem::weakly_canonical(policy.media_root, ec);
+         const auto relative              = std::filesystem::relative(path, root, ec);
+-        if (ec || relative.empty() || relative.native().starts_with("..")) {
++        if (ec || relative.empty() || relative.string().starts_with("..")) {
+             throw std::invalid_argument("media path is outside configured media root");
+         }
+     }
+diff --git a/src/runtime/contract/types.h b/src/runtime/contract/types.h
+index b2754cce..3ea599c8 100644
+--- a/src/runtime/contract/types.h
++++ b/src/runtime/contract/types.h
+@@ -13,6 +13,10 @@
+ #include <optional>
+ #include <span>
+ 
++#if defined(_MSC_VER) && !defined(__clang__)
++#include <intrin.h>
++#endif
++
+ namespace ninfer::runtime {
+ 
+ using ::ninfer::FinishReason;
+@@ -244,6 +248,32 @@ struct PrefillWork {
+     result.tokens                       = suffix_tokens;
+     result.vision_items                 = vision_items;
+     result.vision_patches               = vision_patches;
++#if defined(_MSC_VER) && !defined(__clang__)
++    unsigned __int64 lin_hi = 0;
++    const unsigned __int64 lin_lo = _umul128(prefix_tokens, suffix_tokens, &lin_hi);
++    unsigned __int64 tri_hi = 0;
++    unsigned __int64 tri_lo = 0;
++    if (suffix_tokens > 0) {
++        if (suffix_tokens == std::numeric_limits<std::uint64_t>::max()) {
++            tri_hi = std::numeric_limits<std::uint64_t>::max();
++        } else {
++            unsigned __int64 prod_hi = 0;
++            const unsigned __int64 prod_lo =
++                _umul128(suffix_tokens, suffix_tokens + 1ULL, &prod_hi);
++            tri_lo = (prod_lo >> 1U) | (prod_hi << 63U);
++            tri_hi = prod_hi >> 1U;
++        }
++    }
++    if (lin_hi > 0 || tri_hi > 0) {
++        result.attention_pairs = std::numeric_limits<std::uint64_t>::max();
++    } else {
++        if (tri_lo > std::numeric_limits<std::uint64_t>::max() - lin_lo) {
++            result.attention_pairs = std::numeric_limits<std::uint64_t>::max();
++        } else {
++            result.attention_pairs = lin_lo + tri_lo;
++        }
++    }
++#else
+     const unsigned __int128 suffix      = suffix_tokens;
+     const unsigned __int128 linear      = static_cast<unsigned __int128>(prefix_tokens) * suffix;
+     const unsigned __int128 triangular  = suffix * (suffix + 1U) / 2U;
+@@ -253,6 +283,7 @@ struct PrefillWork {
+     result.attention_pairs = attention > std::numeric_limits<std::uint64_t>::max()
+                                  ? std::numeric_limits<std::uint64_t>::max()
+                                  : static_cast<std::uint64_t>(attention);
++#endif
+     return result;
+ }
+ 
+diff --git a/src/runtime/engine/context_cost.cpp b/src/runtime/engine/context_cost.cpp
+index fe0c8853..e6429b80 100644
+--- a/src/runtime/engine/context_cost.cpp
++++ b/src/runtime/engine/context_cost.cpp
+@@ -12,7 +12,13 @@
+ #include <system_error>
+ #include <utility>
+ 
++#ifdef _WIN32
++#include <intrin.h>
++#include <process.h>
++inline int getpid() { return _getpid(); }
++#else
+ #include <unistd.h>
++#endif
+ 
+ namespace ninfer::runtime {
+ 
+@@ -23,7 +29,6 @@ const std::vector<ContextCostMachinePreset>& compiled_context_cost_defaults();
+ namespace {
+ 
+ using Json = nlohmann::json;
+-using U128 = unsigned __int128;
+ 
+ constexpr std::size_t direction_index(ContextTransferDirection direction) noexcept {
+     return static_cast<std::size_t>(direction);
+@@ -35,6 +40,28 @@ std::uint64_t saturating_add(std::uint64_t left, std::uint64_t right) noexcept {
+                : left + right;
+ }
+ 
++#if defined(_MSC_VER) && !defined(__clang__)
++std::uint64_t saturating_product(std::uint64_t left, std::uint64_t right) noexcept {
++    unsigned __int64 high = 0;
++    const unsigned __int64 low = _umul128(left, right, &high);
++    return high > 0 ? std::numeric_limits<std::uint64_t>::max() : low;
++}
++
++std::uint64_t q32_product_ns(std::uint64_t coefficient, std::uint64_t units) noexcept {
++    if (coefficient == 0 || units == 0) { return 0; }
++    unsigned __int64 high = 0;
++    const unsigned __int64 low = _umul128(coefficient, units, &high);
++    if (high > 0xFFFFFFFFULL || (high == 0xFFFFFFFFULL && low >= 0xFFFFFFFF00000000ULL)) {
++        return std::numeric_limits<std::uint64_t>::max();
++    }
++    const unsigned __int64 add_low = low + 0xFFFFFFFFULL;
++    const unsigned __int64 carry = (add_low < low) ? 1ULL : 0ULL;
++    const unsigned __int64 add_high = high + carry;
++    return (add_high << 32U) | (add_low >> 32U);
++}
++#else
++using U128 = unsigned __int128;
++
+ std::uint64_t saturating_product(std::uint64_t left, std::uint64_t right) noexcept {
+     const U128 product = static_cast<U128>(left) * right;
+     return product > std::numeric_limits<std::uint64_t>::max()
+@@ -49,6 +76,7 @@ std::uint64_t q32_product_ns(std::uint64_t coefficient, std::uint64_t units) noe
+     if (product >= maximum_scaled) { return std::numeric_limits<std::uint64_t>::max(); }
+     return static_cast<std::uint64_t>((product + kContextCostQ32One - 1U) >> 32U);
+ }
++#endif
+ 
+ void require_object(const Json& value, std::string_view context) {
+     if (!value.is_object()) {
+diff --git a/src/runtime/engine/materialization_planner.h b/src/runtime/engine/materialization_planner.h
+index 64c47ee2..94ea842a 100644
+--- a/src/runtime/engine/materialization_planner.h
++++ b/src/runtime/engine/materialization_planner.h
+@@ -16,6 +16,10 @@
+ #include <utility>
+ #include <vector>
+ 
++#if defined(_MSC_VER) && !defined(__clang__)
++#include <intrin.h>
++#endif
++
+ namespace ninfer::runtime {
+ 
+ struct MaterializationCheckpointPolicy {
+@@ -924,9 +928,18 @@ private:
+                            ? item.estimated_total_ns - parent.estimated_total_ns
+                            : 0;
+             };
++#if defined(_MSC_VER) && !defined(__clang__)
++            unsigned __int64 left_hi = 0;
++            const unsigned __int64 left_lo = _umul128(delta(cost), b, &left_hi);
++            unsigned __int64 right_hi = 0;
++            const unsigned __int64 right_lo = _umul128(delta(prior), a, &right_hi);
++            if (left_hi != right_hi) { return left_hi < right_hi; }
++            if (left_lo != right_lo) { return left_lo < right_lo; }
++#else
+             const __uint128_t left  = static_cast<__uint128_t>(delta(cost)) * b;
+             const __uint128_t right = static_cast<__uint128_t>(delta(prior)) * a;
+             if (left != right) { return left < right; }
++#endif
+         }
+         return cost.key() < prior.key();
+     }
+diff --git a/src/serve/request_log.cpp b/src/serve/request_log.cpp
+index ca246bb6..84adbee0 100644
+--- a/src/serve/request_log.cpp
++++ b/src/serve/request_log.cpp
+@@ -17,7 +17,11 @@
+ #include <system_error>
+ #include <utility>
+ 
++#ifdef _WIN32
++#include "compat/win_posix.h"
++#else
+ #include <unistd.h>
++#endif
+ 
+ namespace ninfer::serve {
+ namespace {
+diff --git a/src/targets/qwen3_6/impl/runtime/api_impl.h b/src/targets/qwen3_6/impl/runtime/api_impl.h
+index 4c3f7e2a..44888dd8 100644
+--- a/src/targets/qwen3_6/impl/runtime/api_impl.h
++++ b/src/targets/qwen3_6/impl/runtime/api_impl.h
+@@ -18,9 +18,15 @@ SequencePlan<Variant>::SequencePlan(
+     : impl_(std::move(impl)) {}
+ 
+ template <>
+-SequencePlan<Variant>::SequencePlan(SequencePlan&&) noexcept = default;
++SequencePlan<Variant>::SequencePlan(SequencePlan&& other) noexcept
++    : impl_(std::move(other.impl_)) {}
++
+ template <>
+-SequencePlan<Variant>& SequencePlan<Variant>::operator=(SequencePlan&&) noexcept = default;
++SequencePlan<Variant>& SequencePlan<Variant>::operator=(SequencePlan&& other) noexcept {
++    impl_ = std::move(other.impl_);
++    return *this;
++}
++
+ template <>
+ SequencePlan<Variant>::~SequencePlan() = default;
+ 
+@@ -80,9 +86,15 @@ RequestBasePlan<Variant>::RequestBasePlan(
+     : impl_(std::move(impl)) {}
+ 
+ template <>
+-RequestBasePlan<Variant>::RequestBasePlan(RequestBasePlan&&) noexcept = default;
++RequestBasePlan<Variant>::RequestBasePlan(RequestBasePlan&& other) noexcept
++    : impl_(std::move(other.impl_)) {}
++
+ template <>
+-RequestBasePlan<Variant>& RequestBasePlan<Variant>::operator=(RequestBasePlan&&) noexcept = default;
++RequestBasePlan<Variant>& RequestBasePlan<Variant>::operator=(RequestBasePlan&& other) noexcept {
++    impl_ = std::move(other.impl_);
++    return *this;
++}
++
+ template <>
+ RequestBasePlan<Variant>::~RequestBasePlan() = default;
+ 
+@@ -130,23 +142,31 @@ PressurePlanningSession<Variant>::PressurePlanningSession(
+     : impl_(std::move(impl)) {}
+ 
+ template <>
+-PressurePlanningSession<Variant>::PressurePlanningSession(PressurePlanningSession&&) noexcept =
+-    default;
++PressurePlanningSession<Variant>::PressurePlanningSession(PressurePlanningSession&& other) noexcept
++    : impl_(std::move(other.impl_)) {}
+ 
+ template <>
+ PressurePlanningSession<Variant>&
+-PressurePlanningSession<Variant>::operator=(PressurePlanningSession&&) noexcept = default;
++PressurePlanningSession<Variant>::operator=(PressurePlanningSession&& other) noexcept {
++    impl_ = std::move(other.impl_);
++    return *this;
++}
+ 
+ template <>
+ PressurePlanningSession<Variant>::~PressurePlanningSession() = default;
+ 
+ template <>
+ CapturePressurePlanningSession<Variant>::CapturePressurePlanningSession(
+-    CapturePressurePlanningSession&&) noexcept = default;
++    CapturePressurePlanningSession&& other) noexcept
++    : candidate_(std::move(other.candidate_)), session_(std::move(other.session_)) {}
+ 
+ template <>
+ CapturePressurePlanningSession<Variant>& CapturePressurePlanningSession<Variant>::operator=(
+-    CapturePressurePlanningSession&&) noexcept = default;
++    CapturePressurePlanningSession&& other) noexcept {
++    candidate_ = std::move(other.candidate_);
++    session_ = std::move(other.session_);
++    return *this;
++}
+ 
+ template <>
+ CapturePressurePlanningSession<Variant>::~CapturePressurePlanningSession() = default;
+diff --git a/src/targets/qwen3_6/impl/runtime/program.h b/src/targets/qwen3_6/impl/runtime/program.h
+index daf47b38..2f15f529 100644
+--- a/src/targets/qwen3_6/impl/runtime/program.h
++++ b/src/targets/qwen3_6/impl/runtime/program.h
+@@ -275,12 +275,15 @@ AdmissionCandidate<NINFER_QWEN36_VARIANT>::AdmissionCandidate(
+     : impl_(std::move(impl)) {}
+ 
+ template <>
+-AdmissionCandidate<NINFER_QWEN36_VARIANT>::AdmissionCandidate(AdmissionCandidate&&) noexcept =
+-    default;
++AdmissionCandidate<NINFER_QWEN36_VARIANT>::AdmissionCandidate(AdmissionCandidate&& other) noexcept
++    : impl_(std::move(other.impl_)) {}
+ 
+ template <>
+ AdmissionCandidate<NINFER_QWEN36_VARIANT>&
+-AdmissionCandidate<NINFER_QWEN36_VARIANT>::operator=(AdmissionCandidate&&) noexcept = default;
++AdmissionCandidate<NINFER_QWEN36_VARIANT>::operator=(AdmissionCandidate&& other) noexcept {
++    impl_ = std::move(other.impl_);
++    return *this;
++}
+ 
+ template <>
+ AdmissionCandidate<NINFER_QWEN36_VARIANT>::~AdmissionCandidate() = default;
+@@ -292,12 +295,15 @@ CapturePressureCandidate<NINFER_QWEN36_VARIANT>::CapturePressureCandidate(
+ 
+ template <>
+ CapturePressureCandidate<NINFER_QWEN36_VARIANT>::CapturePressureCandidate(
+-    CapturePressureCandidate&&) noexcept = default;
++    CapturePressureCandidate&& other) noexcept
++    : impl_(std::move(other.impl_)) {}
+ 
+ template <>
+ CapturePressureCandidate<NINFER_QWEN36_VARIANT>&
+-CapturePressureCandidate<NINFER_QWEN36_VARIANT>::operator=(CapturePressureCandidate&&) noexcept =
+-    default;
++CapturePressureCandidate<NINFER_QWEN36_VARIANT>::operator=(CapturePressureCandidate&& other) noexcept {
++    impl_ = std::move(other.impl_);
++    return *this;
++}
+ 
+ template <>
+ CapturePressureCandidate<NINFER_QWEN36_VARIANT>::~CapturePressureCandidate() = default;

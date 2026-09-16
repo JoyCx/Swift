@@ -1,0 +1,11 @@
+=== speed_probe gptq_abl ===
+-- no-spec --
+summary     generated tokens          110
+summary     prefill speed             1.73k tok/s
+summary     decode speed              76.6 tok/s
+summary     throughput (overall)      75.4 tok/s
+-- dflash2 --
+summary     generated tokens          80
+summary     prefill speed             1.74k tok/s
+summary     decode speed              211.7 tok/s
+summary     dflash2 acceptance rate   37.7%

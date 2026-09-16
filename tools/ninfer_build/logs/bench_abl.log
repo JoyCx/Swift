@@ -1,0 +1,59 @@
+abliterated-nvfp4: 120 prompts, 0 already done, resuming rest
+  progress 10/120  refused so far 0
+  progress 20/120  refused so far 0
+  progress 30/120  refused so far 0
+  progress 40/120  refused so far 0
+  progress 50/120  refused so far 0
+  progress 60/120  refused so far 0
+  progress 70/120  refused so far 0
+  progress 80/120  refused so far 0
+  progress 90/120  refused so far 0
+  progress 100/120  refused so far 0
+Traceback (most recent call last):
+  File "C:\Users\ilaya\AppData\Local\Temp\claude\A--ninfer-spark\79ffab74-e953-4647-8f64-a06ac226f6f9\scratchpad\refusal_bench.py", line 62, in <module>
+    fu.result()
+    ~~~~~~~~~^^
+  File "C:\Users\ilaya\AppData\Local\Python\pythoncore-3.14-64\Lib\concurrent\futures\_base.py", line 443, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ilaya\AppData\Local\Python\pythoncore-3.14-64\Lib\concurrent\futures\_base.py", line 395, in __get_result
+    raise self._exception
+  File "C:\Users\ilaya\AppData\Local\Python\pythoncore-3.14-64\Lib\concurrent\futures\thread.py", line 86, in run
+    result = ctx.run(self.task)
+  File "C:\Users\ilaya\AppData\Local\Python\pythoncore-3.14-64\Lib\concurrent\futures\thread.py", line 73, in run
+    return fn(*args, **kwargs)
+  File "C:\Users\ilaya\AppData\Local\Temp\claude\A--ninfer-spark\79ffab74-e953-4647-8f64-a06ac226f6f9\scratchpad\refusal_bench.py", line 46, in work
+    g = be.generate(GenRequest(tid, p, seed=1, max_tokens=MAXTOK, reasoning_effort="medium", meta={"harmful": True}))
+  File "A:\swift\swiftlab\backends\openai_compat.py", line 74, in generate
+    resp = self._post("/chat/completions", self._body(req))
+  File "A:\swift\swiftlab\backends\openai_compat.py", line 33, in _post
+    with urllib.request.urlopen(r, timeout=self.timeout) as resp:
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ilaya\AppData\Local\Python\pythoncore-3.14-64\Lib\urllib\request.py", line 187, in urlopen
+    return opener.open(url, data, timeout)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ilaya\AppData\Local\Python\pythoncore-3.14-64\Lib\urllib\request.py", line 487, in open
+    response = self._open(req, data)
+  File "C:\Users\ilaya\AppData\Local\Python\pythoncore-3.14-64\Lib\urllib\request.py", line 504, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+                              '_open', req)
+  File "C:\Users\ilaya\AppData\Local\Python\pythoncore-3.14-64\Lib\urllib\request.py", line 464, in _call_chain
+    result = func(*args)
+  File "C:\Users\ilaya\AppData\Local\Python\pythoncore-3.14-64\Lib\urllib\request.py", line 1350, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ilaya\AppData\Local\Python\pythoncore-3.14-64\Lib\urllib\request.py", line 1325, in do_open
+    r = h.getresponse()
+  File "C:\Users\ilaya\AppData\Local\Python\pythoncore-3.14-64\Lib\http\client.py", line 1450, in getresponse
+    response.begin()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\ilaya\AppData\Local\Python\pythoncore-3.14-64\Lib\http\client.py", line 336, in begin
+    version, status, reason = self._read_status()
+                              ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\ilaya\AppData\Local\Python\pythoncore-3.14-64\Lib\http\client.py", line 297, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\ilaya\AppData\Local\Python\pythoncore-3.14-64\Lib\socket.py", line 725, in readinto
+    return self._sock.recv_into(b)
+           ~~~~~~~~~~~~~~~~~~~~^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
